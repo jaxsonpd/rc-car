@@ -1,0 +1,4 @@
+Change Component Comment: Designator=TP22 Old Comment=LED DATA 5V New Comment=LED_D_5V
+Change Component Comment: Designator=TP21 Old Comment=LED DATA New Comment=LED_D
+Change Component Comment: Designator=TP10 Old Comment=USB DETECT New Comment=USB_D
+Change Component Comment: Designator=TP14 Old Comment=VBATT_DIVIDED New Comment=VBATT_D

@@ -1,0 +1,3 @@
+Change Component Comment: Designator=TP15 Old Comment=3V3 RADIO New Comment=3V3_R
+Change Component Comment: Designator=TP22 Old Comment=USB DATA 5V New Comment=LED DATA 5V
+Change Component Comment: Designator=TP21 Old Comment=USB DATA New Comment=LED DATA
