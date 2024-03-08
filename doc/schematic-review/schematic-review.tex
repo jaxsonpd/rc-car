@@ -23,7 +23,7 @@
 
 \item Use serial wire debug interface for programming
 
-\item 3.3\,V MCU regulator can be back driven
+\item 3.3\,V MCU regulator can be back driven (the CAT6219 can).  Others may require a diode
 
 \item Short circuit protection for MCU pio pins going to external headers
 
@@ -34,8 +34,6 @@
 \item LEDs for debugging
 
 \item Jumpers for mode configuration (radio channel select)
-
-\item Pullup resistors on TWI (I2C) bus
 
 \item Test points
 
@@ -86,7 +84,7 @@
 \begin{enumerate}
 %\item Fall-back option if IMU does not work
 
-\item Nav-switch or joystick for remote control
+% \item Nav-switch or joystick for remote control
 
 \item Drive circuit for piezo tweeter
 
@@ -94,7 +92,9 @@
 
 % \item IMU AUX pins not connected
 
-\item Acceleromter nCS pin connected high to enable I2C operation
+\item Accelerometer nCS pin connected high to enable I2C operation
+
+\item Pullup resistors on TWI (I2C) bus
 
 \end{enumerate}
 
@@ -103,6 +103,9 @@
 
 
 \begin{enumerate}
+
+\item Can isolate H-bridge and buck regulator with jumper or zero ohm
+  resistors
 
 \item MOSFET(s) for actuator (if use p-channel MOSFET need transistor
   to provide sufficient gate voltage to turn MOSFET off)
