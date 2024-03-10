@@ -151,6 +151,10 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=SCEBZKKU
 
+[GeneratedDocument1]
+DocumentPath=Project Outputs for Hat\Design Rule Check - Hat_PCB.html
+DItemRevisionGUID=
+
 [Configuration1]
 Name=Sources
 ParameterCount=0
