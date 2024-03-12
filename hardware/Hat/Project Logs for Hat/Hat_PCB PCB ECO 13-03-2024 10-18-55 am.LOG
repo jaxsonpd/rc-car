@@ -1,0 +1,20 @@
+Removed Pin From Net: NetName=RADIOCONFIG_1 Pin=S3-3
+Removed Pin From Net: NetName=RADIOCONFIG_0 Pin=S3-4
+Added Component: Designator=R26(RESC1608L)
+Add component (AddParameter): Name = "Storage Location"; Value = "PCB Assembly WS"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "ECE Dept"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "2K"; VariantName = "[No Variations]"
+Added Component: Designator=R29(RESC1608L)
+Add component (AddParameter): Name = "Storage Location"; Value = "PCB Assembly WS"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "ECE Dept"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "2K"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=RADIOCONFIG_0 Pin=R26-2
+Added Pin To Net: NetName=RADIOCONFIG_1 Pin=R29-2
+Added Pin To Net: NetName=NetR26_1 Pin=R26-1
+Added Pin To Net: NetName=NetR26_1 Pin=S3-4
+Added Net: Name=NetR26_1
+Added Pin To Net: NetName=NetR29_1 Pin=R29-1
+Added Pin To Net: NetName=NetR29_1 Pin=S3-3
+Added Net: Name=NetR29_1
+Added Member To Class: ClassName=Peripherals Member=Component R26 2K
+Added Member To Class: ClassName=Peripherals Member=Component R29 2K
