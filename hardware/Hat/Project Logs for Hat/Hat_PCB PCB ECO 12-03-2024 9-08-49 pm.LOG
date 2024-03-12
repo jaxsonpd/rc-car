@@ -1,0 +1,6 @@
+Added Pin To Net: NetName=EXTRA_1 Pin=R19-1
+Added Pin To Net: NetName=EXTRA_1 Pin=U1-19
+Added Net: Name=EXTRA_1
+Added Pin To Net: NetName=EXTRA_2 Pin=R20-1
+Added Pin To Net: NetName=EXTRA_2 Pin=U1-20
+Added Net: Name=EXTRA_2

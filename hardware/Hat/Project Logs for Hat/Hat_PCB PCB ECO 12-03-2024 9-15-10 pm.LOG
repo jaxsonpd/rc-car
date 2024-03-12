@@ -1,0 +1,10 @@
+Removed Pin From Net: NetName=VBATT_DIVIDED Pin=U1-3
+Removed Pin From Net: NetName=LED_DATA Pin=U1-9
+Removed Pin From Net: NetName=JOYSTICK PUSH Pin=U1-16
+Removed Pin From Net: NetName=ACC_INT1 Pin=U1-41
+Removed Pin From Net: NetName=ACC_INT2 Pin=U1-42
+Added Pin To Net: NetName=VBATT_DIVIDED Pin=U1-13
+Added Pin To Net: NetName=LED_DATA Pin=U1-37
+Added Pin To Net: NetName=ACC_INT2 Pin=U1-41
+Added Pin To Net: NetName=ACC_INT1 Pin=U1-42
+Added Pin To Net: NetName=JOYSTICK PUSH Pin=U1-52
