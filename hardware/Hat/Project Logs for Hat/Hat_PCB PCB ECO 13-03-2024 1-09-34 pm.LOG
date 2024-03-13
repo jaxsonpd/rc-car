@@ -1,0 +1,18 @@
+Removed Pin From Net: NetName=3V3 Pin=C28-1
+Removed Pin From Net: NetName=GND Pin=C28-2
+Removed Pin From Net: NetName=3V3 Pin=C29-1
+Removed Pin From Net: NetName=GND Pin=C29-2
+Removed Pin From Net: NetName=3V3 Pin=VR1-1
+Removed Pin From Net: NetName=GND Pin=VR1-3
+Removed Pin From Net: NetName=3V3 Pin=VR1-4
+Removed Pin From Net: NetName=GND Pin=VR1-6
+Removed Pin From Net: NetName=GND Pin=VR1-7
+Removed Pin From Net: NetName=3V3 Pin=VR1-8
+Removed Pin From Net: NetName=GND Pin=VR1-10
+Removed Member From Class: ClassName=Peripherals Member=C28
+Removed Member From Class: ClassName=Peripherals Member=C29
+Removed Member From Class: ClassName=Peripherals Member=TP26
+Removed Member From Class: ClassName=Peripherals Member=TP27
+Removed Member From Class: ClassName=Peripherals Member=VR1
+Change Component Comment : Designator=S1 Old Comment=nRST New Comment=EVQPNF05M
+Change Component Comment : Designator=S2 Old Comment=SLEEP New Comment=EVQPNF05M
