@@ -1,7 +1,7 @@
 Protel Design System Design Rule Check
 PCB File : C:\Users\jackp_duhgfso\OneDrive - University of Canterbury\Documents\ENCE461\wacky-racers\hardware\Hat\Hat_PCB.PcbDoc
-Date     : 14/03/2024
-Time     : 10:01:57 am
+Date     : 17/03/2024
+Time     : 5:03:02 pm
 
 Processing Rule : Clearance Constraint (Gap=0.2mm) (All),(All)
 Rule Violations :0
@@ -25,19 +25,14 @@ Processing Rule : SMD To Corner (Distance=0.25mm) (All)
 Rule Violations :0
 
 Processing Rule : SMD To Plane Constraint (Distance=5mm) (All)
-   Violation between SMD To Plane Constraint: Pad C13-1(37.338mm,68.01mm) on Top Layer Actual Distance = 2539.975mm
-   Violation between SMD To Plane Constraint: Pad C2-1(16.528mm,41.692mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad C24-2(6.415mm,20.955mm) on Top Layer Actual Distance = 2539.975mm
-   Violation between SMD To Plane Constraint: Pad C5-2(33.147mm,68.134mm) on Top Layer Actual Distance = 2539.975mm
-   Violation between SMD To Plane Constraint: Pad DL3-2(23.114mm,39.954mm) on Top Layer Actual Distance = 2539.975mm
+   Violation between SMD To Plane Constraint: Pad DL3-2(22.352mm,39.954mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad L4-2(42.1mm,29.3mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U1-1(35.75mm,65.525mm) on Top Layer Actual Distance = 2539.975mm
-   Violation between SMD To Plane Constraint: Pad U1-17(26.475mm,63.75mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U1-18(26.475mm,63.25mm) on Top Layer Actual Distance = 2539.975mm
-   Violation between SMD To Plane Constraint: Pad U1-45(34.25mm,54.475mm) on Top Layer Actual Distance = 2539.975mm
+   Violation between SMD To Plane Constraint: Pad U1-2(35.25mm,65.525mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U1-58(37.525mm,60.75mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U1-7(32.75mm,65.525mm) on Top Layer Actual Distance = 2539.975mm
-   Violation between SMD To Plane Constraint: Pad U2-2(16.978mm,37.192mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U2-3(17.928mm,37.192mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U4-1(4.104mm,37.382mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U4-2(5.054mm,37.382mm) on Top Layer Actual Distance = 2539.975mm
@@ -47,9 +42,8 @@ Processing Rule : SMD To Plane Constraint (Distance=5mm) (All)
    Violation between SMD To Plane Constraint: Pad U6-5(4.953mm,15.818mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U6-6(5.903mm,15.818mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U7-1(42mm,34.025mm) on Top Layer Actual Distance = 2539.975mm
-   Violation between SMD To Plane Constraint: Pad U7-12(42.8mm,37.475mm) on Top Layer Actual Distance = 2539.975mm
    Violation between SMD To Plane Constraint: Pad U7-2(42.8mm,34.025mm) on Top Layer Actual Distance = 2539.975mm
-Rule Violations :24
+Rule Violations :18
 
 Processing Rule : SMD Neck-Down Constraint (Percent=50%) (Disabled)(All)
 Rule Violations :0
@@ -122,6 +116,6 @@ Processing Rule : Height Constraint (Min=0mm) (Max=50.8mm) (Prefered=12.7mm) (Al
 Rule Violations :0
 
 
-Violations Detected : 46
+Violations Detected : 40
 Waived Violations : 0
-Time Elapsed        : 00:00:01
+Time Elapsed        : 00:00:02

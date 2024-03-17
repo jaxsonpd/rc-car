@@ -1,0 +1,36 @@
+Added Component: Designator=MT1(MNT-HOLE_2.6mm_NPTH)
+Add component (AddParameter): Name = "Manufacturer"; Value = "Hi-Q"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer PN"; Value = "2BV series M2.5 Clearance"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "note"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "price"; Value = "0"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "ECE Dept"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "value"; Value = "M2.6 NPTH"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Verify"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=MT2(MNT-HOLE_2.6mm_NPTH)
+Add component (AddParameter): Name = "Manufacturer"; Value = "Hi-Q"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer PN"; Value = "2BV series M2.5 Clearance"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "note"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "price"; Value = "0"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "ECE Dept"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "value"; Value = "M2.6 NPTH"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Verify"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=MT3(MNT-HOLE_2.6mm_NPTH)
+Add component (AddParameter): Name = "Manufacturer"; Value = "Hi-Q"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer PN"; Value = "2BV series M2.5 Clearance"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "note"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "price"; Value = "0"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "ECE Dept"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "value"; Value = "M2.6 NPTH"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Verify"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=MT4(MNT-HOLE_2.6mm_NPTH)
+Add component (AddParameter): Name = "Manufacturer"; Value = "Hi-Q"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer PN"; Value = "2BV series M2.5 Clearance"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "note"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "price"; Value = "0"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier"; Value = "ECE Dept"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "value"; Value = "M2.6 NPTH"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Verify"; Value = ""; VariantName = "[No Variations]"
+Added Member To Class: ClassName=MCU Member=Component MT1 M2.6 NPTH
+Added Member To Class: ClassName=MCU Member=Component MT2 M2.6 NPTH
+Added Member To Class: ClassName=MCU Member=Component MT3 M2.6 NPTH
+Added Member To Class: ClassName=MCU Member=Component MT4 M2.6 NPTH
