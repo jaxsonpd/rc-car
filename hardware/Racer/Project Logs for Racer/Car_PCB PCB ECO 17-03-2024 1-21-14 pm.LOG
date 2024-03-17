@@ -1,0 +1,5 @@
+Change Component Comment : Designator=TP15 Old Comment=3V3-RADIO New Comment=3V3 RADIO
+Change Component Comment : Designator=TP28 Old Comment=ACTUATOR1 New Comment=ACT1
+Change Component Comment : Designator=TP29 Old Comment=ACTUATOR2 New Comment=ACT2
+Change Component Comment : Designator=TP30 Old Comment=ACTUATOR3 New Comment=ACT3
+Change Component Comment : Designator=TP14 Old Comment=VBATT_DIV New Comment=VBATT_DIVIDED
