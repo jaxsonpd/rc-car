@@ -1,0 +1,13 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [Hat.PrjPcb]
+   Generated File[Hat_PCB-RoundHoles.TXT]
+   Generated File[Hat_PCB-SlotHoles.TXT]
+   Generated File[Hat_PCB.LDP]
+   Generated File[Hat_PCB.DRR]
+
+
+Files Generated   : 4
+Documents Printed : 0
+
+Finished Output Generation At 8:54:16 am On 18/03/2024
