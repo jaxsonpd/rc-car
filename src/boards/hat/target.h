@@ -40,18 +40,20 @@
 /* LEDs  */
 #define LED_ERROR_PIO PA0_PIO
 #define LED_STATUS_PIO PA1_PIO
+#define LED_ACTIVE 0
 
 /* General  */
 #define APPENDAGE_PIO PA1_PIO
 #define SERVO_PWM_PIO PA2_PIO
 
 /* Button  */
-#define BUTTON_PIO PA16_PIO
+#define BUTTON_PIO PA2_PIO
 
 /* Radio  */
-#define RADIO_CS_PIO PA10_PIO
-#define RADIO_CE_PIO PA9_PIO
-#define RADIO_IRQ_PIO PA15_PIO
+#define RADIO_CS_PIO PA8_PIO
+#define RADIO_CE_PIO PA7_PIO
+#define RADIO_IRQ_PIO PA6_PIO
+#define RADIO_POWER_ENABLE_PIO PA9_PIO
 
 /* LED tape  */
 #define LEDTAPE_PIO PA16_PIO

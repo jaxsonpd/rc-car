@@ -3,7 +3,7 @@
         {
             "name": "hat",
             "intelliSenseMode": "linux-gcc-arm",
-            "compilerPath": "",
+            "compilerPath": "/usr/bin/arm-none-eabi-gcc",
             "defines": [
                 "BOARD=hat",
                 "MCU=SAM4S8B",
