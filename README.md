@@ -20,3 +20,8 @@ Assignment guide
 ----------------
 
 The [guide](https://eng-git.canterbury.ac.nz/wacky-racers/wacky-racers/-/raw/master/doc/guide/guide.pdf) is a PDF file stored in this repository (you'll also get a copy when you fork the project).
+
+C style Guide
+-------------
+
+https://github.com/jaxsonpd/etc/blob/main/Guides/C%20Style%20Guide.md
