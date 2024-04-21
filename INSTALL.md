@@ -45,3 +45,9 @@ usbipd attach --wsl --busid <busid>
 lsusb
 ```
 To list the devices attached to the ubuntu installation
+
+# Toolchain
+
+The toolchain can then be downloaded using the guide found at:
+
+https://eng-git.canterbury.ac.nz/wacky-racers/wacky-racers/-/raw/master/doc/guide/guide.pdf?inline=true
