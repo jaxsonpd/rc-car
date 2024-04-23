@@ -1,5 +1,5 @@
 PERIPHERALS = pit
-DRIVERS =
+DRIVERS = pacer
 SRC = racer.c
 
 # Use low level of optimisation to simplify debugging
