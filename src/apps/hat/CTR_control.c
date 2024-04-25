@@ -6,6 +6,11 @@
  * 
  * This file implements both accelerometer proccessing and converting the 
  * raw data to control inputs to be sent over radio.
+ *
+ * Accelerometer Settings:
+ * FIFO_CTL 0x80 - stream mode FIFO holds last 32 values and overwrites
+ * POWER_CTL 0x08 - measure bit
+ * DATA_FORMAT 0x08 - Full resolution mode +-2g (4mg/LSB scale)
  */
 
 
