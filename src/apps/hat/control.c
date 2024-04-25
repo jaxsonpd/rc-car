@@ -19,7 +19,7 @@
 
 #include "adxl345.h"
 
-#include "CTR_control.h"
+#include "control.h"
 
 static twi_t adxl345_twi;
 static adxl345_t *adxl345;
@@ -33,7 +33,7 @@ static twi_cfg_t adxl345_twi_cfg =
 };
 
 
-int8_t CTR_init (twi_slave_addr_t slave_addr) {
+int8_t control_init (twi_slave_addr_t slave_addr) {
     adxl345_twi = twi_init(&adxl345_twi_cfg);
 
     if (!adxl345_twi) return 1; // twi failed
@@ -54,15 +54,15 @@ static int8_t get_raw_data (int16_t accel[3]) {
 }
 
 
-int8_t CTR_update (controlData_t *controlData) {
+int8_t control_update (control_data_t *control_data) {
     int16_t accel[3];
     
     int8_t r_readResult = get_raw_data (accel);
 
     if (r_readResult == 0) {
-        controlData->raw_x = accel[0];
-        controlData->raw_y = accel[1];
-        controlData->raw_z = accel[2];
+        control_data->raw_x = accel[0];
+        control_data->raw_y = accel[1];
+        control_data->raw_z = accel[2];
     }
 
     return r_readResult;

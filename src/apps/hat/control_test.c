@@ -6,7 +6,7 @@
  * 
  * Build Options:
  * DRIVERS = pacer usb_serial adxl345 panic
- * SRC = CTR_Test.c CTR_control.c 
+ * SRC = control_test.c control.c 
  */
 
 #include <stdint.h>
@@ -18,14 +18,14 @@
 #include "usb_serial.h"
 #include "panic.h"
 
-#include "CTR_control.h"
+#include "control.h"
 #include "target.h"
 
 #define PACER_RATE 50
 #define CONTROL_UPDATE_RATE 50
 
 
-controlData_t g_controlData; 
+control_data_t g_control_data; 
 
 
 void setup (void) {
@@ -54,11 +54,11 @@ int main (void) {
 
         if (ticks > (PACER_RATE / CONTROL_UPDATE_RATE)) {
             int8_t updateResult;
-            if ((updateResult = CTR_update(&g_controlData)) == 0) {
+            if ((updateResult = CTR_update(&g_control_data)) == 0) {
                 //printf ("x: %5d  y: %5d  z: %5d, %1d\n", g_controlData.raw_x, 
                 //g_controlData.raw_y, g_controlData.raw_z, updateResult);
-                printf ("%5d, %5d,  %5d, %1d\n", g_controlData.raw_x, 
-                g_controlData.raw_y, g_controlData.raw_z, updateResult);
+                printf ("%5d, %5d,  %5d, %1d\n", g_control_data.raw_x, 
+                g_control_data.raw_y, g_control_data.raw_z, updateResult);
             } else {
                 printf ("Acc Error\n");
             }

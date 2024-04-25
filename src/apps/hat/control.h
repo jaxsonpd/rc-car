@@ -20,7 +20,7 @@ typedef struct {
     int16_t raw_x;
     int16_t raw_y;
     int16_t raw_z;
-} controlData_t;
+} control_data_t;
 
 /** 
  * @brief Initalise the control module including the accelerometer
@@ -28,7 +28,7 @@ typedef struct {
  * 
  * @return 0 if succesful, 1 if twi fails, 2 if adxl345 fails
  */
-int8_t CTR_init (twi_slave_addr_t slave_addr);
+int8_t control_init (twi_slave_addr_t slave_addr);
 
 /** 
  * @brief Update the control struct with new information
@@ -36,7 +36,7 @@ int8_t CTR_init (twi_slave_addr_t slave_addr);
  * 
  * @return 0 if succesful, 1 if device was not ready, 2 if read failed
  */
-int8_t CTR_update (controlData_t *controlData);
+int8_t control_update (control_data_t *control_data);
 
 
 #endif // CONTROL_H
