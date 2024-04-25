@@ -1,10 +1,13 @@
 /** 
- * @file hat.c
+ * @file CTR_Test.c
  * @author Jack Duignan (Jdu80@uclive.ac.nz)
- * @date 2024-04-22
- * @brief This is the main file for the hat program
+ * @date 2024-04-25
+ * @brief This file is used to test the control module
+ * 
+ * Build Options:
+ * DRIVERS = pacer usb_serial adxl345 panic
+ * SRC = hat.c CTR_control.c 
  */
-
 
 #include <stdint.h>
 #include <stdbool.h>

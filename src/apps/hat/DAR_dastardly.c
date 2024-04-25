@@ -1,5 +1,5 @@
 // Ethan
-// inputs: roll value (int8_t) -128->+128
+// inputs: roll value (int16_t) <- !! changed from when we talked
 // outpus: pwm signal
 
 
