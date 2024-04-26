@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "adxl345.h"
 
@@ -29,7 +30,7 @@
 static twi_t adxl345_twi;
 static adxl345_t *adxl345;
 
-circ_buff_t *x_buffer, *y_buffer, *z_buffer;
+circ_buff_t x_buffer, y_buffer, z_buffer;
 
 static twi_cfg_t adxl345_twi_cfg =
 {
@@ -52,9 +53,9 @@ int8_t control_init (twi_slave_addr_t slave_addr, bool buff_en) {
     if (buff_en) {
         g_buff_en = true;
 
-        circ_buff_init(x_buffer, BUFFER_SIZE);
-        circ_buff_init(y_buffer, BUFFER_SIZE);
-        circ_buff_init(z_buffer, BUFFER_SIZE);
+        circ_buff_init(&x_buffer, BUFFER_SIZE);
+        circ_buff_init(&y_buffer, BUFFER_SIZE);
+        circ_buff_init(&z_buffer, BUFFER_SIZE);
     }
 
     return 0;
@@ -74,12 +75,12 @@ int8_t control_update (void) {
 
     int16_t accel[3];
     
-    int8_t r_readResult = get_raw_data (accel);
+    int8_t r_readResult = get_raw_data(accel);
 
     if (r_readResult == 0) {
-        circ_buff_write(x_buffer, accel[0]);
-        circ_buff_write(y_buffer, accel[1]);
-        circ_buff_write(z_buffer, accel[2]);
+        circ_buff_write(&x_buffer, (int32_t)accel[0]);
+        circ_buff_write(&y_buffer, (int32_t)accel[1]);
+        circ_buff_write(&z_buffer, (int32_t)accel[2]);
     }
 
     return r_readResult;
@@ -90,9 +91,9 @@ int8_t control_get_data (control_data_t *control_data) {
     int8_t r_read_result = 0;
 
     if (g_buff_en) {
-        control_data->raw_x = circ_buff_mean(x_buffer);
-        control_data->raw_y = circ_buff_mean(y_buffer);
-        control_data->raw_z = circ_buff_mean(z_buffer);
+        control_data->raw_x = circ_buff_mean(&x_buffer);
+        control_data->raw_y = circ_buff_mean(&y_buffer);
+        control_data->raw_z = circ_buff_mean(&z_buffer);
 
     } else {
         int16_t accel[3];

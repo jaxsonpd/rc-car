@@ -19,7 +19,7 @@ int8_t circ_buff_init (circ_buff_t *buffer, int32_t size) {
     buffer->windex = 0;
     buffer->rindex = 0;
     buffer->size = size;
-    buffer->data = (int32_t*) calloc(size, sizeof(uint32_t));
+    buffer->data = (int32_t*) calloc(size, sizeof(int32_t));
 
     return (buffer->data == NULL);
 }

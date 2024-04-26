@@ -12,51 +12,33 @@
 #include <pio.h>
 
 #include "pacer.h"
-#include "usb_serial.h"
-#include "panic.h"
 
-#include "CTR_control.h"
+#include "usb_serial.h"
+#include "control.h"
 #include "target.h"
 
-#define PACER_RATE 50
-#define CONTROL_UPDATE_RATE 25
+#define LED_FLASH_RATE 4
 
 
-controlData_t g_controlData; 
+control_data_t g_control_data;
 
 
-void setup (void) {
+int main (void) {   
+    // Setup
     pio_config_set(LED_STATUS_PIO, LED_ACTIVE);
-    pio_config_set(LED_ERROR_PIO, !LED_ACTIVE);
+    control_init(ADXL345_ADDRESS, false);
+    usb_serial_stdio_init();
     
-    pacer_init(PACER_RATE);
-
-    if (CTR_init(ADXL345_ADDRESS)) {
-        panic (LED_ERROR_PIO, 2);
-    }
-
-    usb_serial_stdio_init ();
-}
-
-
-int main (void) {
-    int32_t ticks = 0;
-
-    setup();
-    printf("Setup Complete");
+    pacer_init(LED_FLASH_RATE);
 
     while (1) {
         pacer_wait();
-        ticks++;
-
-        if (ticks > (PACER_RATE / CONTROL_UPDATE_RATE)) {
-            int8_t updateResult;
-            if ((updateResult = CTR_update(&g_controlData)) == 0) {
-                printf ("x: %5d  y: %5d  z: %5d, %1d\n", g_controlData.raw_x, 
-                g_controlData.raw_y, g_controlData.raw_z, updateResult);
-            } else {
-                printf ("Acc Error\n");
-            }
-        } 
+        printf("On\n");    
+        control_update();
+        control_get_data(&g_control_data);
+        printf ("%5d, %5d,  %5d\n", g_control_data.raw_x, 
+                g_control_data.raw_y, g_control_data.raw_z);
+        pio_output_toggle(LED_STATUS_PIO);
     }
 }
+
