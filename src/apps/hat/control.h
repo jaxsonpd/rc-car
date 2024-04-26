@@ -23,20 +23,29 @@ typedef struct {
 } control_data_t;
 
 /** 
- * @brief Initalise the control module including the accelerometer
+ * @brief Initialise the control module including the accelerometer
  * @param slave_addr the address of the adxl345
+ * @param buff_en sets wether the circular buffers are enabled
  * 
- * @return 0 if succesful, 1 if twi fails, 2 if adxl345 fails
+ * @return 0 if successful, 1 if twi fails, 2 if adxl345 fails
  */
-int8_t control_init (twi_slave_addr_t slave_addr);
+int8_t control_init (twi_slave_addr_t slave_addr, bool buff_en);
+
+
+/** 
+ * @brief Update the circular buffers for the control module if necessary
+ * 
+ * @return 0 if successful, 1 if device was not ready, 2 if read failed, 
+ * 3 if circular buffers not enabled
+ */
+int8_t control_update (void);
 
 /** 
  * @brief Update the control struct with new information
  * @param controlData a pointer to the control struct
  * 
- * @return 0 if succesful, 1 if device was not ready, 2 if read failed
+ * @return 0 if successful, 1 if device was not ready, 2 if read failed
  */
-int8_t control_update (control_data_t *control_data);
-
+int8_t control_get_data (control_data_t *control_data);
 
 #endif // CONTROL_H

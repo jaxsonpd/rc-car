@@ -22,7 +22,7 @@
 #include "target.h"
 
 #define PACER_RATE 50
-#define CONTROL_UPDATE_RATE 50
+#define CONTROL_UPDATE_RATE 6
 
 
 control_data_t g_control_data; 
@@ -30,35 +30,38 @@ control_data_t g_control_data;
 
 void setup (void) {
     pio_config_set(LED_STATUS_PIO, LED_ACTIVE);
-    pio_config_set(LED_ERROR_PIO, !LED_ACTIVE);
+    pio_config_set(LED_ERROR_PIO, LED_ACTIVE);
     
     pacer_init(PACER_RATE);
 
-    if (CTR_init(ADXL345_ADDRESS)) {
-        panic (LED_ERROR_PIO, 2);
+    if (control_init(ADXL345_ADDRESS, true)) {
+        // panic (LED_ERROR_PIO, 2);
     }
-
-    usb_serial_stdio_init ();
 }
 
 
 int main (void) {
     int32_t ticks = 0;
+    pio_config_set(LED_STATUS_PIO, LED_ACTIVE);
+    pio_config_set(LED_ERROR_PIO, LED_ACTIVE);
+    usb_serial_stdio_init ();
+    
 
+    printf("Starting Setup");
     setup();
     printf("Setup Complete");
 
     while (1) {
         pacer_wait();
         ticks++;
-
+        control_update();
         if (ticks > (PACER_RATE / CONTROL_UPDATE_RATE)) {
-            int8_t updateResult;
-            if ((updateResult = CTR_update(&g_control_data)) == 0) {
+            int8_t get_result;
+            if ((get_result = control_get_data(&g_control_data)) == 0) {
                 //printf ("x: %5d  y: %5d  z: %5d, %1d\n", g_controlData.raw_x, 
                 //g_controlData.raw_y, g_controlData.raw_z, updateResult);
-                printf ("%5d, %5d,  %5d, %1d\n", g_control_data.raw_x, 
-                g_control_data.raw_y, g_control_data.raw_z, updateResult);
+                printf ("%5d, %5d,  %5d\n", g_control_data.raw_x, 
+                g_control_data.raw_y, g_control_data.raw_z);
             } else {
                 printf ("Acc Error\n");
             }
