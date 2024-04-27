@@ -115,7 +115,7 @@ this will take the path of least impedance.
   and run the traces on the bottom layer (to form a microstrip with
   the power plane).  Be careful not to route traces on the bottom
   layer over gaps in the power plane (this breaks the microstrip and
-  thus increases crosstalk).
+  thus increases crosstalk) \footnote{See \url{https://www.signalintegrityjournal.com/articles/692-split-planes-and-what-happens-when-microstrip-signals-cross-them}.}.
 
 \item Route low-level analogue signals well away from the high-speed
   traces, preferably on the bottom layer (where they are shielded from
@@ -127,15 +127,27 @@ this will take the path of least impedance.
 \item Finally, route the low-speed signal traces (for LEDs and buttons
   etc.).  These can jump layers to go around the high-speed traces.
 
-\item If you use a via underneath a component with a metal heatsink
-  pad, ensure it is tented (these have a layer of insulating solder
-  resist).  Note, untented vias are useful for test points.
 \end{enumerate}
 
 In the past it was undesirable to have acute angles ($<90^{\circ}$) in
 traces due prevent the formation of acid traps during etching.
 However, it seems that modern PCB etching does not have this
 problem\footnote{\url{https://resources.pcb.cadence.com/blog/are-acid-traps-still-a-problem-for-pcbs-in-2019-2}}.
+
+
+\section{Vias}
+
+
+\begin{enumerate}
+\item Use normal vias but not blind or buried vias.  The smallest via
+  that can be made for this assignment has a 0.3\,mm hole with a
+  0.8\,mm annulus.  However, it is better to use a via with a 0.5\,mm
+  hole and 1.0\,mm annulus.
+
+\item If you use a via underneath a component with a metal heatsink
+  pad, ensure it is tented (these have a layer of insulating solder
+  resist).  Note, untented vias are useful for test points.
+\end{enumerate}
 
 
 \section{Recommended layouts}
