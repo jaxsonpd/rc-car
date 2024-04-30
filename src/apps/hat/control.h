@@ -15,11 +15,27 @@
 
 #include "adxl345.h"
 
-
+/**
+ * @struct control_data_t
+ * A struct to store the control values for the car
+ * 
+ * @var control_data_t::raw_x
+ *      The raw value (after buffering) of the accelerometers x direction
+ * @var control_data_t::raw_y
+ *      The write index
+ * @var control_data_t::raw_z
+ *      The read index
+ * @var control_data_t::steering_angle
+ *      A value from -100 to 100 for the steering of the car 
+ * @var control_data_t::throttle
+ *      A value from -100 to 100 for the throttle of the car
+*/
 typedef struct {
     int16_t raw_x;
     int16_t raw_y;
     int16_t raw_z;
+    int8_t steering_angle;
+    int8_t throttle; 
 } control_data_t;
 
 /** 

@@ -26,6 +26,16 @@
 
 #define BUFFER_SIZE 8
 
+/// The steering angles divisor to go from accelerometer value to duty cycle
+#define STEERING_DIVISOR 2 
+#define STEERING_MAX 100
+#define STEERING_MIN -100
+
+/// The steering angles divisor to go from accelerometer value to duty cycle
+#define THROTTLE_DIVISOR 2
+#define THROTTLE_MAX 100
+#define THROTTLE_MIN -100
+
 
 static twi_t adxl345_twi;
 static adxl345_t *adxl345;
@@ -87,6 +97,44 @@ int8_t control_update (void) {
 }
 
 
+/** 
+ * @brief Calculate the steering angle for the car
+ * @param raw_x the raw accelerometer value
+ * 
+ * @return the duty cycle from -100 to 100
+ */
+static int8_t calc_steering(int16_t raw_x) {
+    int16_t r_control_value =  raw_x / STEERING_DIVISOR;
+
+    if (r_control_value >= 0 && r_control_value > STEERING_MAX) {
+        r_control_value = STEERING_MAX;
+    } else if (r_control_value < 0 && r_control_value < STEERING_MIN) {
+        r_control_value = STEERING_MIN;
+    }
+
+    return (int8_t)r_control_value;
+}
+
+
+/** 
+ * @brief Calculate the throotle level for the var
+ * @param raw_y the raw accelerometer value
+ * 
+ * @return the duty cycle from THROTTLE_MAX to THROTTLE_MIN
+ */
+static int8_t calc_throttle(int16_t raw_y) {
+    int16_t r_control_value =  raw_y / THROTTLE_DIVISOR;
+
+    if (r_control_value >= 0 && r_control_value > THROTTLE_MAX) {
+        r_control_value = THROTTLE_MAX;
+    } else if (r_control_value < 0 && r_control_value < THROTTLE_MIN) {
+        r_control_value = THROTTLE_MIN;
+    }
+
+    return (int8_t)r_control_value;
+}
+
+
 int8_t control_get_data (control_data_t *control_data) {
     int8_t r_read_result = 0;
 
@@ -106,6 +154,9 @@ int8_t control_get_data (control_data_t *control_data) {
             control_data->raw_z = accel[2];
         }
     }
+
+    control_data->steering_angle = calc_steering(control_data->raw_x);
+    control_data->throttle = calc_throttle(control_data->raw_y);
 
     return r_read_result;
 }
