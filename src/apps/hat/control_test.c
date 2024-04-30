@@ -63,8 +63,9 @@ int main (void) {
             if ((get_result = control_get_data(&g_control_data)) == 0) {
                 //printf ("x: %5d  y: %5d  z: %5d, %1d\n", g_controlData.raw_x, 
                 //g_controlData.raw_y, g_controlData.raw_z, updateResult);
-                printf ("%5d, %5d,  %5d\n", g_control_data.raw_x, 
-                g_control_data.raw_y, g_control_data.raw_z);
+                printf ("%5d, %5d,  %5d, %4d, %4d\n", g_control_data.raw_x, 
+                g_control_data.raw_y, g_control_data.raw_z, 
+                g_control_data.steering_angle, g_control_data.throttle);
             } else {
                 printf ("Acc Error\n");
             }
