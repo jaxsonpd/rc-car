@@ -38,8 +38,8 @@ int main(void)
     nrf24_t *nrf;
 
     // Configure LED PIO as output.
-    pio_config_set (LED_ERROR_PIO, PIO_OUTPUT_LOW);
-    pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set (LED_ERROR_PIO, !LED_ACTIVE);
+    pio_config_set (LED_STATUS_PIO, LED_ACTIVE);
 
     // Redirect stdio to USB serial.
     usb_serial_stdio_init ();
@@ -66,5 +66,7 @@ int main(void)
             printf ("%s\n", buffer);
             pio_output_toggle (LED_STATUS_PIO);
         }
+
+        delay_ms (100);
     }
 }

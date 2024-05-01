@@ -57,6 +57,6 @@
 #define RADIO_POWER_ENABLE_PIO PA9_PIO
 
 /* LED tape  */
-#define LEDTAPE_PIO PA16_PIO
+#define LEDTAPE_PIO PA5_PIO
 
 #endif /* TARGET_H  */

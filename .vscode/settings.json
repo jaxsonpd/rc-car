@@ -1,4 +1,7 @@
 {
     "windowsToolchainEnvCmd": "C:\\ence461\\ence461-path.bat",
-    "makeNumJobs": "2"
+    "makeNumJobs": "2",
+    "editor.columnSelection": false,
+    "editor.wordWrap": "wordWrapColumn",
+    "cmake.configureOnOpen": false
 }

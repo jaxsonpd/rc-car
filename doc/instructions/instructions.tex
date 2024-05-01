@@ -1,7 +1,7 @@
 \documentclass[11pt, a4paper]{article}
 \title{Wacky Racers 2024 Instructions}
 \author{Michael Hayes}
-\date{Version 1.110, \today}
+\date{Version 1.111, \today}
 
 \usepackage[margin=1in]{geometry}
 \usepackage{parskip}
@@ -261,13 +261,18 @@ requirements are:
 
 \item [Blinky] Demonstrate that can blink an LED controlled by the SAM4S.
 
-\item [Accelerometer/motors] For the Wacky Hat, demonstrate output of
-  accelerometer readings to a PC using USB CDC and generate a PWM
-  signal with a frequency proportional to the tilt angle of the
-  accelerometer.
+\item [Accelerometer/motors]
+  For the Wacky Hat,
+  \begin{itemize}
+  \item Demonstrate the output of accelerometer readings to a PC using USB CDC (as provided in the test apps).
+  \item Map the accelerometer readings to two duty cycles for variable speed and steering control (forward and backward), and output the result to a PC using USB CDC.
+  \end{itemize}
 
-  For the Wacky Racer, demonstrate generation of a PWM signal with a
-  duty set from a terminal program using USB CDC.
+  For the Wacky Racer,
+  \begin{itemize}
+    \item Demonstrate the operation of the locomotion motors using PWM signals (as provided in the test apps).
+    \item Provide variable speed and steering control for the locomotion motors (forward and backward) from a PC using USB CDC. 
+    \end{itemize}
 
 \item[Radio control]
 
@@ -279,7 +284,7 @@ requirements are:
 \end{description}
 
 \textbf{If you cannot show the functionality of a previous milestone
-  during any assessment, you will fail that assessment and loose any
+  during any assessment, you will fail that assessment and lose any
   marks from the previous milestone.}
 
 
@@ -340,8 +345,6 @@ operational wacky racer wins.  Hitting the bumper of an opponents
 wacky racer removes them from the battle.
 
 Marks will also be awarded for wackiness, group costumes, etc.
-
-
 
 
 \subsection{PCB inspection}
@@ -407,8 +410,6 @@ This is assessed after the competition.  The categories are:
 \item [Week~5]\mbox{}\\[-0.4cm]
 
   \begin{itemize}
-  \item Watch SMT lab induction video.
-
   \item Submit PCB design (early round).
   \end{itemize}
 
@@ -418,39 +419,34 @@ This is assessed after the competition.  The categories are:
   \item Submit PCB design (late round).
   \end{itemize}
 
-%\item [Week~7]\mbox{}\\[-0.4cm]
+
+\item [Break]\mbox{}\\[-0.4cm]
+
+  \begin{itemize}
+  \item Watch SMT lab induction video.
+  \item Populate and test PCB.
+  \end{itemize}
 
 
-%\item [Week~8]\mbox{}\\[-0.4cm]
+\item [Week-7]\mbox{}\\[-0.4cm]
 
+  \begin{itemize}
+  \item Demonstrate blinky program if ready.
+  \end{itemize}
+
+\item [Week~8]\mbox{}\\[-0.4cm]
+
+  \begin{itemize}
+  \item Demonstrate blinky program.
+  \end{itemize}
 
 \item [Week~9]\mbox{}\\[-0.4cm]
-
-  \begin{itemize}
-  \item Populate and test PCB.
-  \end{itemize}
-
-
-\item [Week~10]\mbox{}\\[-0.4cm]
-
-  \begin{itemize}
-  \item Populate and test PCB.
-  \item Demonstrate blinky program.
-  \end{itemize}
-
-\item [Week~11]\mbox{}\\[-0.4cm]
-
-  \begin{itemize}
-  \item Demonstrate blinky program.
-  \end{itemize}
-
-\item [Week~12]\mbox{}\\[-0.4cm]
 
   \begin{itemize}
   \item Demonstrate accelerometer/motors functionality.
   \end{itemize}
 
-\item [Week~13]\mbox{}\\[-0.4cm]
+\item [Week~10]\mbox{}\\[-0.4cm]
 
   \begin{itemize}
   \item Demonstrate radio control.
@@ -458,7 +454,7 @@ This is assessed after the competition.  The categories are:
   \item Plan your costumes!
   \end{itemize}
 
-\item [Week~14]\mbox{}\\[-0.4cm]
+\item [Week~11]\mbox{}\\[-0.4cm]
 
   \begin{itemize}
   \item Demonstrate full functionality.
@@ -466,7 +462,7 @@ This is assessed after the competition.  The categories are:
   \item Prepare your costumes and dastardly stuff!
   \end{itemize}
 
-\item [Week~15]\mbox{}\\[-0.4cm]
+\item [Week~12]\mbox{}\\[-0.4cm]
 
   \begin{itemize}
   \item Practice control of your wacky racer.
