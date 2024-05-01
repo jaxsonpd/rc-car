@@ -20,7 +20,7 @@
         {
             "name": "racer",
             "intelliSenseMode": "gcc-arm",
-            "compilerPath": "",
+            "compilerPath": "/usr/bin/arm-none-eabi-gcc",
             "defines": [
                 "BOARD=racer",
                 "MCU=SAM4S8B",
