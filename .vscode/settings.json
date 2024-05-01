@@ -3,5 +3,8 @@
     "makeNumJobs": "2",
     "editor.columnSelection": false,
     "editor.wordWrap": "wordWrapColumn",
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "files.associations": {
+        "pwm.h": "c"
+    }
 }

@@ -4,17 +4,29 @@
    Descr:  This example starts two channels simultaneously; one inverted
            with respect to the other.
 */
+///////////////////////////////////////////
+// #include "pwm.h"
+// #include "pio.h"
+// #include "delay.h"
+// #include "panic.h"
+
+///////////////////////////////////////////
+#include <stdint.h>
+#include <stdbool.h>
+
+#include <pio.h>
 #include "pwm.h"
-#include "pio.h"
 #include "delay.h"
 #include "panic.h"
 
-#define PWM1_PIO PA1_PIO
-#define PWM2_PIO PA2_PIO
+#include "target.h"
+
+#define PWM1_PIO PA25_PIO
+#define PWM2_PIO PB14_PIO
 
 // If you are using PWM to drive a motor you will need
 // to choose a lower frequency!
-#define PWM_FREQ_HZ 100e3
+#define PWM_FREQ_HZ 20000
 
 static const pwm_cfg_t pwm1_cfg =
 {

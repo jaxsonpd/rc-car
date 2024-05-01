@@ -31,7 +31,8 @@
                 "${workspaceFolder}/src/boards/racer",
                 "${workspaceFolder}/src/mat91lib/sam4s/**",
                 "${workspaceFolder}/src/mat91lib/**",
-                "${workspaceFolder}/src/mmculib/**"
+                "${workspaceFolder}/src/mmculib/**",
+                "${workspaceFolder}/src/mmculib/pacer"
             ]
         }
     ],
