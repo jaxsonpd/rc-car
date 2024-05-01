@@ -12,55 +12,46 @@
 #include <stdbool.h>
 
 /***
- * @struct comms_packet
+ * @struct radio_config_t
  * 
- * @var comms::right_duty
- *      The PWM duty cycle for the right track
- * @var comms::left_duty
- *      The PWM duty cycle for the left track
- * @var
- * 
- * @var comms::parity
- *      Parity to confirm packet recieved from correct hat. Determined as 
- *      half right_duty + half left_duty
+ * @var radio_config_t::config_0
+ *      Bit to indicate position of radio config switch 0
+ * @var radio_config_t::config_1
+ *      Bit to indicate position of radio config switch 1
+ *
 */  
 
 typedef struct {
-    int16_t right_duty;
-    int16_t left_duty;
-    int16_t parity;
-}   comms_packet;
+    int8_t config_0;
+    int8_t config_1;
+} radio_config_t;
+
 
 /** 
  * @brief Initialise the radio module including the accelerometer
+ * @return 0 for successful initaliation, 1 if nrf init fails
  */
-void radio_init (void);
-
-/** 
- * @brief Collates parameters into a communication packet
- * @param right_duty The duty cycle to drive the right chassis tread
- * @param left_duty The duty cycle to drive the left chassis trad
- * @param parity The parity bits to confirm communication
- * @return A created communication packet
- */
-comms_packet comms_packet_setup (int16_t right_duty, int16_t left_duty, int16_t parity);
+int8_t radio_init (void);
 
 /** 
  * @brief Transmit a packet over radio
- * @param packet A communications packet
+ * @param right_duty The duty cycle to drive the right chassis tread
+ * @param left_duty The duty cycle to drive the left chassis trad
+ * @param parity The parity bits to confirm communication
  */
-void radio_tx (comms_packet packet);
+void radio_tx (int16_t right_duty, int16_t left_duty, int16_t parity);
 
 /** 
  * @brief Recieve a packet over radio
  * @return Packet recieved or Error
  */
-comms_packet radio_rx (void);
+int16_t radio_rx (void);
 
 /** 
  * @brief Configures the radio based on the radio configuration switches
+ * @returns The switch positions of the radio dip switches
  */
-void radio_config (void);
+int8_t radio_config (void);
 
 
 
