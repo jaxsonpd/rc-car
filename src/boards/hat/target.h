@@ -59,4 +59,7 @@
 /* LED tape  */
 #define LEDTAPE_PIO PA5_PIO
 
+/* Buzzer */
+#define BUZZER_PIO PIO_PB1
+
 #endif /* TARGET_H  */
