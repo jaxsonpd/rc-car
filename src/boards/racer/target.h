@@ -51,6 +51,13 @@
 #define RADIO_POWER_ENABLE_PIO PA9_PIO
 
 /* LED tape  */
-#define LEDTAPE_PIO PA16_PIO
+#define LEDTAPE_PIO PA15_PIO
+
+/* H-Birdge Inputs*/
+#define HBRIDGE_A1 = PA25_PIO  // HIGH = Forwards
+#define HBRIDGE_B1 = PB14_PIO  // HIGH = Forwards
+#define HBRIDGE_A2 = PB1_PIO   // HIGH = Backwards
+#define HBRIDGE_B2 = PB0_PIO   // HIGH = Backwards
+
 
 #endif /* TARGET_H  */
