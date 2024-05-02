@@ -26,68 +26,79 @@
 #define RADIO_ADDRESS 0x0123456789LL // Needs to match car communications
 #define RADIO_PAYLOAD_SIZE 32
 
-static spi_cfg_t spi_cfg = {
+
+static nrf24_t *g_nrf;
+
+
+
+// initial radio function
+int8_t radio_init (void) {
+    spi_cfg_t spi_cfg = {
         .channel = 0,
         .clock_speed_kHz = 1000,
         .cs = RADIO_CS_PIO,
-        .mode = SPI_MODE_0
+        .mode = SPI_MODE_0,
         .cs_mode = SPI_CS_MODE_FRAME,
         .bits = 8,
-    }
+    };
 
-static nrf24_cfg_t nrf24_cfg = {
+    nrf24_cfg_t nrf24_cfg = {
         .channel = RADIO_CHANNEL,
         .address = RADIO_ADDRESS,
         .payload_size = RADIO_PAYLOAD_SIZE,
         .ce_pio = RADIO_CE_PIO,
         .irq_pio = RADIO_IRQ_PIO,
         .spi = spi_cfg,
+    };
+
+    pio_config_set (RADIO_POWER_ENABLE_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set (RADIO_CONFIG_0, PIO_PULLUP);
+    pio_config_set (RADIO_CONFIG_1, PIO_PULLUP);
+
+    uint8_t button_cfg = pio_input_get(RADIO_CONFIG_0) << 1 
+        | pio_input_get (RADIO_CONFIG_1);
+
+    switch (button_cfg) {
+        case 0:
+            nrf24_cfg.channel = 1;
+        case 1:
+            nrf24_cfg.channel = 2;
+        case 2:
+            nrf24_cfg.channel = 3;
+        case 3:
+            nrf24_cfg.channel = 4;
     }
 
-// initial radio function
-int8_t radio_init (void) {
-    pio_config_set (RADIO_POWER_ENABLE_PIO, PIO_OUTPUT_HIGH);
-    pio_config_set (RADIO_CONFIG_0, PIO_PULLDOWN);
-    pio_config_set (RADIO_CONFIG_1, PIO_PULLDOWN);
+    g_nrf = nrf_init(&nrf24_cfg);
 
-    nrf = nrf_init(&nrf24_cfg);
-    if (! nrf) 
+    if (! g_nrf) {
         return 1; // error in nrf initialisation
-    else
+    } else {
         return 0; // successful intialisation
-
+    }
 }
 
 // Send message
 void radio_tx (int16_t right_duty, int16_t left_duty, int16_t parity) {
-    char buffer[RADIO_PAYLOAD_SIZE + 1]
+    char buffer[RADIO_PAYLOAD_SIZE + 1];
 
     snprintf(buffer, sizeof (buffer), "%d,%d,%d", right_duty, left_duty, parity);
 
     // writes to nrf radio???
-    if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE))  
+    if (! nrf24_write (g_nrf, buffer, RADIO_PAYLOAD_SIZE))  
         return 0;
     else
         return 1;
 }
     
-// Recieve message
+// Receive message
 int16_t radio_rx (void) {
     char buffer[RADIO_PAYLOAD_SIZE + 1];
-    uint8_t bytes = nrf24_rad (nrf, buffer, RADIO_PAYLOAD_SIZE);
+    uint8_t bytes = nrf24_rad (g_nrf, buffer, RADIO_PAYLOAD_SIZE);
 
     // if message is not empty, print to terminal
     if (bytes != 0) {
         buffer [bytes] = 0;
         // do something with recieved message (probably not needed for hat)
     }
-}
-
-//Configure Radio
-radio_config_t radio_config (void) {
-    radio_config_t g_radio_config;
-    g_radio_config.config_0 = pio_input_get(RADIO_CONFIG_0);
-    g_radio_config.config_1 = pio_input_get(RADIO_CONFIG_1);
-    return g_radio_config;
-    
 }

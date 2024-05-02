@@ -39,6 +39,14 @@ int main (void) {
         printf ("%5d, %5d,  %5d\n", g_control_data.raw_x, 
                 g_control_data.raw_y, g_control_data.raw_z);
         pio_output_toggle(LED_STATUS_PIO);
+
+        radio_packet_t packet = {
+            .left_duty = 0,
+            .right_duty = 0,
+            .dastardly = 0,
+        };
+
+        radio_tx(&packet);
     }
 }
 
