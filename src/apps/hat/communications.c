@@ -79,16 +79,15 @@ int8_t radio_init (void) {
 }
 
 // Send message
-void radio_tx (int16_t right_duty, int16_t left_duty, int16_t parity) {
+int8_t radio_tx (radio_packet_t *packet) {
     char buffer[RADIO_PAYLOAD_SIZE + 1];
 
-    snprintf(buffer, sizeof (buffer), "%d,%d,%d", right_duty, left_duty, parity);
+    snprintf(buffer, sizeof (buffer), "%d,%d,%d", packet->right_duty, packet->left_duty, packet->parity);
 
-    // writes to nrf radio???
     if (! nrf24_write (g_nrf, buffer, RADIO_PAYLOAD_SIZE))  
-        return 0;
+        return 0; // Success
     else
-        return 1;
+        return 1; // Failure
 }
     
 // Receive message

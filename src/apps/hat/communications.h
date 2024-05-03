@@ -18,18 +18,17 @@ typedef struct {
 } radio_packet_t;
 
 /** 
- * @brief Initialise the radio module including the accelerometer
+ * @brief Initialise the radio channel and module
  * @return 0 for successful initaliation, 1 if nrf init fails
  */
 int8_t radio_init (void);
 
 /** 
  * @brief Transmit a packet over radio
- * @param right_duty The duty cycle to drive the right chassis tread
- * @param left_duty The duty cycle to drive the left chassis trad
- * @param parity The parity bits to confirm communication
+ * @param *packet pointer to radio packet for transmission
+ * @return Bit indicating success or failure of nrf24_write
  */
-void radio_tx (radio_packet_t *packet);
+int8_t radio_tx (radio_packet_t *packet);
 
 /** 
  * @brief Recieve a packet over radio
