@@ -34,8 +34,8 @@ typedef struct {
     int16_t raw_x;
     int16_t raw_y;
     int16_t raw_z;
-    int8_t steering_angle;
-    int8_t throttle; 
+    int8_t left_motor;
+    int8_t right_motor; 
 } control_data_t;
 
 /** 

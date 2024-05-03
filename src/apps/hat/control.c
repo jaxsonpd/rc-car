@@ -31,10 +31,17 @@
 #define STEERING_MAX 100
 #define STEERING_MIN -100
 
-/// The steering angles divisor to go from accelerometer value to duty cycle
+/// The throttle divisor to go from accelerometer value to duty cycle
 #define THROTTLE_DIVISOR 2
 #define THROTTLE_MAX 100
 #define THROTTLE_MIN -100
+
+/// The maximums for duty cycle for the left and right motor
+#define LEFT_MOTOR_MAX 100
+#define LEFT_MOTOR_MIN -100
+
+#define RIGHT_MOTOR_MAX 100
+#define RIGHT_MOTOR_MIN -100
 
 
 static twi_t adxl345_twi;
@@ -138,12 +145,13 @@ static int8_t calc_throttle(int16_t raw_y) {
 int8_t control_get_data (control_data_t *control_data) {
     int8_t r_read_result = 0;
 
-    if (g_buff_en) {
+    if (g_buff_en) { // Get buffer values
         control_data->raw_x = circ_buff_mean(&x_buffer);
         control_data->raw_y = circ_buff_mean(&y_buffer);
         control_data->raw_z = circ_buff_mean(&z_buffer);
 
-    } else {
+    } else { // Get the raw values (slower for update but don't need control 
+             // update function)
         int16_t accel[3];
     
         r_read_result = get_raw_data (accel);
@@ -155,8 +163,27 @@ int8_t control_get_data (control_data_t *control_data) {
         }
     }
 
-    control_data->steering_angle = calc_steering(control_data->raw_x);
-    control_data->throttle = calc_throttle(control_data->raw_y);
+
+    // Calculate the tank tracks
+    int8_t steering = calc_steering(control_data->raw_x);
+    int8_t throttle = calc_throttle(control_data->raw_y);
+    int16_t left_motor = throttle - steering;
+    int16_t right_motor = throttle + steering;
+
+    if (left_motor > LEFT_MOTOR_MAX) {
+        left_motor = LEFT_MOTOR_MAX;
+    } else if (left_motor < LEFT_MOTOR_MIN) {
+        left_motor = LEFT_MOTOR_MIN;
+    }
+
+    if (right_motor > RIGHT_MOTOR_MAX) {
+        right_motor = RIGHT_MOTOR_MAX;
+    } else if (left_motor < RIGHT_MOTOR_MIN) {
+        right_motor = RIGHT_MOTOR_MIN;
+    }
+
+    control_data->left_motor = left_motor;
+    control_data->right_motor = right_motor;
 
     return r_read_result;
 }
