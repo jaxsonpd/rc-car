@@ -40,7 +40,7 @@ void setup (void) {
 
     pacer_init(PACER_RATE);
 
-    if (control_init(ADXL345_ADDRESS, false)) {
+    if (control_init(ADXL345_ADDRESS, true)) {
         panic (LED_ERROR_PIO, 2);
     }
 }
@@ -65,7 +65,7 @@ int main (void) {
                 //g_controlData.raw_y, g_controlData.raw_z, updateResult);
                 printf ("%5d, %5d,  %5d, %4d, %4d\n", g_control_data.raw_x, 
                 g_control_data.raw_y, g_control_data.raw_z, 
-                g_control_data.steering_angle, g_control_data.throttle);
+                g_control_data.left_motor, g_control_data.right_motor);
             } else {
                 printf ("Acc Error\n");
             }
