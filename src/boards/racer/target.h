@@ -41,8 +41,8 @@
 #define BUTTON_PIO PA16_PIO
 
 /* H-bridges   */
-#define MOTOR_LEFT_PWM_PIO PA11_PIO
-#define MOTOR_RIGHT_PWM_PIO PA7_PIO
+#define MOTOR_LEFT_PWM_PIO PA25_PIO
+#define MOTOR_RIGHT_PWM_PIO PB1_PIO
 
 /* Radio  */
 #define RADIO_CS_PIO PA8_PIO
