@@ -1,7 +1,7 @@
 PERIPHERALS = pwm pit
 DRIVERS = panic
 
-SRC = hbridge.c
+SRC = motor_driver.c
 
 include ../../boards/board.mk
 

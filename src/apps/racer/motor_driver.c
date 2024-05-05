@@ -1,17 +1,9 @@
-/* File:   hbridhe.c
+/* File:   motor_driver.c
    Author: I Patel & D Hawes
-   Date:   2 May 2024
-   Descr:  Runs all 4 PWM signals to H bridge 
+   Date:   5 May 2024
+   Descr:  Turns on the H bridge and drives the motors  
 */
-// #include <stdint.h>
-// #include <stdbool.h>
 
-// #include <pio.h>
-// #include "pwm.h"
-// #include "delay.h"
-// #include "panic.h"
-
-// #include "target.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -29,13 +21,15 @@
 #define PWM3_PIO PB1_PIO //AIN2
 #define PWM4_PIO PB0_PIO //BIN2
 
+#define NFault_PIO PA28_PIO // nFault pin
+#define NSleep_PIO PA29_PIO // nSleep pin
 
 // If you are using PWM to drive a motor you will need
 // to choose a lower frequency!
-#define PWM_FREQ_HZ 2000
+#define PWM_FREQ_HZ 1000
 #define START_DUTY_CYCLE 0
 
-uint32_t duty_cycle = 50;
+uint32_t duty_cycle = 20;
 
 static const pwm_cfg_t pwm1_cfg =
 {
@@ -89,6 +83,11 @@ main (void)
     pwm_t pwm4;
 
     pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(NFault_PIO, PIO_INPUT);
+    pio_config_set(NFault_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(NSleep_PIO, PIO_OUTPUT_HIGH);
+
+    pio_output_high(NSleep_PIO);
 
     pwm1 = pwm_init (&pwm1_cfg);
     if (! pwm1)
@@ -124,30 +123,30 @@ main (void)
         // pio_output_toggle (LED_STATUS_PIO);
 
         // Turn on AIN1 (PWM1) and AIN2 (PWM3), and set BIN1 (PWM2) to maximum and BIN2 (PWM4) to minimum
-        pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
+        pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50));
+        pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50));
         pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
         pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        delay_ms(5000); // Wait for 5 seconds
+        delay_ms(10000); // Wait for 5 seconds
 
         // Turn on BIN1 (PWM2) and BIN2 (PWM4), and set AIN1 (PWM1) to maximum and AIN2 (PWM3) to minimum
         pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
         pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        delay_ms(5000); // Wait for 5 seconds
+        pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50));
+        pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50));
+        delay_ms(10000); // Wait for 5 seconds
 
-        pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
+        pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50));
+        pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50));
         pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
         pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        delay_ms(5000); // Wait for 5 seconds
+        delay_ms(10000); // Wait for 5 seconds
 
         pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
         pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 10));
-        pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 100));
-        delay_ms(5000); // Wait for 5 seconds
+        pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50));
+        pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50));
+        delay_ms(10000); // Wait for 5 seconds
     }
 
     return 0;
