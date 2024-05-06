@@ -25,7 +25,7 @@
 #define TWI_TIMEOUT_US_DEFAULT 10000
 
 /* USB  */
-//#define USB_VBUS_PIO PA5_PIO
+#define USB_VBUS_PIO PA5_PIO
 #define USB_CURRENT_MA 500
 
 /* LEDs  */
