@@ -90,14 +90,14 @@ void set_duty(pwm_t pwm1, pwm_t pwm2, pwm_t pwm3, pwm_t pwm4, int duty_cycle_lef
     int duty_cycle_right_backwards = 0;
     int duty_cycle_left_forwards = 0;
     int duty_cycle_left_backwards = 0;
-    if (duty_cycle > 100) {
+    if (duty_cycle_right > 0 || duty_cycle_left > 0) {
         duty_cycle_right_forwards = duty_cycle_right;
         duty_cycle_left_forwards = duty_cycle_left;
         duty_cycle_left_backwards = 0;
         duty_cycle_right_backwards = 0;
     } else {
-        duty_cycle_right_backwards = duty_cycle_right;
-        duty_cycle_left_backwards = duty_cycle_left;
+        duty_cycle_right_backwards = -duty_cycle_right;
+        duty_cycle_left_backwards = -duty_cycle_left;
         duty_cycle_right_forwards = 0;
         duty_cycle_left_forwards = 0;
     }
@@ -114,6 +114,8 @@ int main (void)
     pwm_t pwm2;
     pwm_t pwm3;
     pwm_t pwm4;
+
+    bool asked = false;
 
     pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(N_FAULT, PIO_INPUT);
@@ -148,8 +150,8 @@ int main (void)
     pwm_start(pwm3);
     pwm_start(pwm4);
 
-    pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 30));
-    pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 30));
+    pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
+    pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
     pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
     pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
 
@@ -157,18 +159,26 @@ int main (void)
     {
         delay_ms(DELAY_MS);
         char buf[256];
+        if (!asked) {
+            printf("Enter No.\n");
+            asked = true;
+        }
         if (fgets(buf, sizeof(buf), stdin)) {
             int num;
             char direction;
             if (sscanf(buf, "%d %c", &num, &direction) == 2) {
-                if (num >= -100 && num <= 100) {
+                if (num >= -98 && num <= 98) {
                     if (direction == 'r') {
                         set_duty(pwm1, pwm2, pwm3, pwm4, 0, num);
                         printf("You entered: %d, %c\n", num, direction);
-                    } else {
+                    } else if (direction == 'l') {
                         set_duty(pwm1, pwm2, pwm3, pwm4, num, 0);
                         printf("You entered: %d, %c\n", num, direction);
+                    } else {
+                        set_duty(pwm1, pwm2, pwm3, pwm4, 0, 0);
+                        printf("Stopping motors\n");
                     }
+                    asked = false;
                 }
                 else {
                     printf("Please enter -100 - 100 No.\n");
