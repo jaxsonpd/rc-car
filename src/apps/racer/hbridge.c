@@ -17,7 +17,7 @@
 #include <stdbool.h>
 
 #include <pio.h>
-
+#include "usb_serial.h"
 #include "pwm.h"
 #include "delay.h"
 #include "panic.h"
@@ -29,10 +29,15 @@
 #define PWM3_PIO PB1_PIO //AIN2
 #define PWM4_PIO PB0_PIO //BIN2
 
+#define N_FAULT PA28_PIO // nFault pin
+#define N_SLEEP PA29_PIO // nSleep pin
+
+#define DELAY_MS 10
+
 
 // If you are using PWM to drive a motor you will need
 // to choose a lower frequency!
-#define PWM_FREQ_HZ 2000
+#define PWM_FREQ_HZ 1000
 #define START_DUTY_CYCLE 0
 
 uint32_t duty_cycle = 50;
@@ -80,13 +85,30 @@ static const pwm_cfg_t pwm4_cfg =
     .stop_state = PIO_OUTPUT_LOW,
 };
 
-int
-main (void)
+void set_duty(pwm_t pwm1, pwm_t pwm2, pwm_t pwm3, pwm_t pwm4, int duty_cycle_forwards) {
+    // Turn on AIN1 (PWM1) and AIN2 (PWM3), and set BIN1 (PWM2) to maximum and BIN2 (PWM4) to minimum
+    pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle_forwards));
+    pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle_forwards));
+    pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
+    pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
+}
+
+int main (void)
 {
     pwm_t pwm1;
     pwm_t pwm2;
     pwm_t pwm3;
     pwm_t pwm4;
+
+    pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(N_FAULT, PIO_INPUT);
+    pio_config_set(N_FAULT, PIO_OUTPUT_HIGH);
+    pio_config_set(N_SLEEP, PIO_OUTPUT_HIGH);
+    pio_output_high(N_SLEEP);
+
+    int i = 0;
+    if(usb_serial_stdio_init() < 0) 
+        panic(LED_ERROR_PIO, 3);
 
     pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
 
@@ -111,43 +133,31 @@ main (void)
     pwm_start(pwm3);
     pwm_start(pwm4);
 
+    pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
+    pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
+    pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
+    pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
+
     while (1)
     {
-        // delay_ms (5000);
-        // if(duty_cycle >= 50) {
-        //     duty_cycle -= 20;
-        //     pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle));
-        // } else {
-        //     duty_cycle += 20;
-        //     pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle));
-        // }
-        // pio_output_toggle (LED_STATUS_PIO);
-
-        // Turn on AIN1 (PWM1) and AIN2 (PWM3), and set BIN1 (PWM2) to maximum and BIN2 (PWM4) to minimum
-        pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        delay_ms(5000); // Wait for 5 seconds
-
-        // Turn on BIN1 (PWM2) and BIN2 (PWM4), and set AIN1 (PWM1) to maximum and AIN2 (PWM3) to minimum
-        pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        delay_ms(5000); // Wait for 5 seconds
-
-        pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-        pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        delay_ms(5000); // Wait for 5 seconds
-
-        pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-        pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 10));
-        pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 100));
-        delay_ms(5000); // Wait for 5 seconds
+        delay_ms(DELAY_MS);
+        char buf[256];
+        if (fgets(buf, sizeof(buf), stdin)) {
+            int num;
+            if (sscanf(buf, "%d", &num) == 1) {
+                if (num >= -100 && num <= 100) {
+                    printf("You entered: %d\n", num);
+                    set_duty(pwm1, pwm2, pwm3, pwm4, num);
+                }
+                else {
+                    printf("Please enter -100 - 100 No.\n");
+                }
+            } else {
+                printf("Invalid input\n");
+                // Clear input buffer
+                // while (getchar() != '\n');
+            }
+        }
     }
 
     return 0;
