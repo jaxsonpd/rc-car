@@ -37,7 +37,7 @@
 
 // If you are using PWM to drive a motor you will need
 // to choose a lower frequency!
-#define PWM_FREQ_HZ 1000
+#define PWM_FREQ_HZ 2000
 #define START_DUTY_CYCLE 0
 
 uint32_t duty_cycle = 50;
@@ -85,12 +85,21 @@ static const pwm_cfg_t pwm4_cfg =
     .stop_state = PIO_OUTPUT_LOW,
 };
 
-void set_duty(pwm_t pwm1, pwm_t pwm2, pwm_t pwm3, pwm_t pwm4, int duty_cycle_forwards) {
+void set_duty(pwm_t pwm1, pwm_t pwm2, pwm_t pwm3, pwm_t pwm4, int duty_cycle) {
+    int duty_cycle_forwards = 0;
+    int duty_cycle_backwards = 0;
+    if (duty_cycle > 100) {
+        duty_cycle_forwards = duty_cycle;
+        duty_cycle_backwards = 0;
+    } else {
+        duty_cycle_backwards = duty_cycle;
+        duty_cycle_forwards = 0;
+    }
     // Turn on AIN1 (PWM1) and AIN2 (PWM3), and set BIN1 (PWM2) to maximum and BIN2 (PWM4) to minimum
     pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle_forwards));
     pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle_forwards));
-    pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
-    pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
+    pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle_backwards));
+    pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle_backwards));
 }
 
 int main (void)
@@ -133,8 +142,8 @@ int main (void)
     pwm_start(pwm3);
     pwm_start(pwm4);
 
-    pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
-    pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 20));
+    pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 30));
+    pwm_duty_set(pwm2, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 30));
     pwm_duty_set(pwm3, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
     pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
 
