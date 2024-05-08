@@ -1,11 +1,8 @@
 PERIPHERALS = pwm pit
-DRIVERS = panic
+DRIVERS = usb_serial pacer panic
 
-SRC = motor_driver.c
+SRC = hbridge.c
 
 include ../../boards/board.mk
-
-# Use low level of optimisation to simplify debugging
-OPT = -O1
 
 BOARD = racer

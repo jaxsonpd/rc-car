@@ -10,6 +10,8 @@
 
 #include <pio.h>
 
+#include "usb_serial.h"
+
 #include "pwm.h"
 #include "delay.h"
 #include "panic.h"
@@ -23,6 +25,8 @@
 
 #define NFault_PIO PA28_PIO // nFault pin
 #define NSleep_PIO PA29_PIO // nSleep pin
+
+#define DELAY_MS 10
 
 // If you are using PWM to drive a motor you will need
 // to choose a lower frequency!
@@ -112,15 +116,24 @@ main (void)
 
     while (1)
     {
-        // delay_ms (5000);
-        // if(duty_cycle >= 50) {
-        //     duty_cycle -= 20;
-        //     pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle));
-        // } else {
-        //     duty_cycle += 20;
-        //     pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle));
-        // }
-        // pio_output_toggle (LED_STATUS_PIO);
+
+        delay_ms(DELAY_MS);
+        char buf[256];
+        if (fgets(buf, sizeof(buf), stdin)) {
+            int num;
+            if (sscanf(buf, "%d", &num) == 1) {
+                if (num >= -100 && num <= 100) {
+                    printf("You entered: %d\n", num);
+                }
+                else {
+                    printf("Please enter -100 - 100 No.\n");
+                }
+            } else {
+                printf("Invalid input\n");
+                // Clear input buffer
+                // while (getchar() != '\n');
+            }
+        } 
 
         // Turn on AIN1 (PWM1) and AIN2 (PWM3), and set BIN1 (PWM2) to maximum and BIN2 (PWM4) to minimum
         pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50));

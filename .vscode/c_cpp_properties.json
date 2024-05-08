@@ -32,7 +32,8 @@
                 "${workspaceFolder}/src/mat91lib/sam4s/**",
                 "${workspaceFolder}/src/mat91lib/**",
                 "${workspaceFolder}/src/mmculib/**",
-                "${workspaceFolder}/src/mmculib/pacer"
+                "${workspaceFolder}/src/mmculib/pacer",
+                "${workspaceFolder}/src/mmculib/usb_serial"
             ]
         }
     ],
