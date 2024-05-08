@@ -15,6 +15,7 @@ typedef struct {
     int8_t left_duty;
     int8_t right_duty;
     uint8_t dastardly;
+    uint8_t parity;
 } radio_packet_t;
 
 /** 
@@ -29,6 +30,14 @@ int8_t radio_init (void);
  * @return Bit indicating success or failure of nrf24_write
  */
 int8_t radio_tx (radio_packet_t *packet);
+
+/** 
+ * @brief Send the radio packet out on the serial line
+ * @param packet the radio packet to send
+ * 
+ * @return 0 on success
+ */
+int8_t serial_tx (radio_packet_t *packet);
 
 /** 
  * @brief Recieve a packet over radio

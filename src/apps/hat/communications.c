@@ -2,11 +2,7 @@
  * @file communications.c
  * @author Ethan Wildash-Chan (ewi69@uclive.ac.nz)
  * @date 2024-05-01
- * @brief Communications 
- * 
- * Build Options:
- * DRIVERS = pacer usb_serial adxl345 panic
- * SRC = control_test.c control.c circular_buffer.c
+ * @brief Communications module for both radio and serial
  */
 
 #include <stdint.h>
@@ -61,20 +57,24 @@ int8_t radio_init (void) {
     switch (button_cfg) {
         case 0:
             nrf24_cfg.channel = 1;
+            break;
         case 1:
             nrf24_cfg.channel = 2;
+            break;
         case 2:
             nrf24_cfg.channel = 3;
+            break;
         case 3:
             nrf24_cfg.channel = 4;
+            break;
     }
 
-    g_nrf = nrf_init(&nrf24_cfg);
+    g_nrf = nrf24_init(&nrf24_cfg);
 
     if (! g_nrf) {
         return 1; // error in nrf initialisation
     } else {
-        return 0; // successful intialisation
+        return 0; // successful initialisation
     }
 }
 
@@ -89,15 +89,14 @@ int8_t radio_tx (radio_packet_t *packet) {
     else
         return 1; // Failure
 }
+
+int8_t serial_tx (radio_packet_t *packet) {
+    printf("%d,%d,%d\n", packet->right_duty, packet->left_duty, packet->parity);
+
+    return 0;
+}
     
 // Receive message
 int16_t radio_rx (void) {
-    char buffer[RADIO_PAYLOAD_SIZE + 1];
-    uint8_t bytes = nrf24_rad (g_nrf, buffer, RADIO_PAYLOAD_SIZE);
-
-    // if message is not empty, print to terminal
-    if (bytes != 0) {
-        buffer [bytes] = 0;
-        // do something with recieved message (probably not needed for hat)
-    }
+    return 0;
 }

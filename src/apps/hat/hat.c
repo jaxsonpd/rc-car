@@ -8,45 +8,77 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include <pio.h>
 
 #include "pacer.h"
-
 #include "usb_serial.h"
+#include "panic.h"
+#include "delay.h"
+
 #include "control.h"
+#include "communications.h"
 #include "target.h"
 
-#define LED_FLASH_RATE 4
+#define PACER_RATE 50
+#define CONTROL_UPDATE_RATE 12
+#define RADIO_SEND_RATE 6
 
+control_data_t g_control_data; 
+radio_packet_t g_radio_packet;
 
-control_data_t g_control_data;
+void setup (void) {
+    usb_serial_stdio_init ();
 
+    pio_config_set(LED_STATUS_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(LED_ERROR_PIO, PIO_OUTPUT_HIGH);
 
-int main (void) {   
-    // Setup
-    pio_config_set(LED_STATUS_PIO, LED_ACTIVE);
-    control_init(ADXL345_ADDRESS, false);
-    usb_serial_stdio_init();
-    
-    pacer_init(LED_FLASH_RATE);
+    pio_output_set(LED_STATUS_PIO, LED_ACTIVE);
 
-    while (1) {
-        pacer_wait();
-        printf("On\n");    
-        control_update();
-        control_get_data(&g_control_data);
-        printf ("%5d, %5d,  %5d\n", g_control_data.raw_x, 
-                g_control_data.raw_y, g_control_data.raw_z);
-        pio_output_toggle(LED_STATUS_PIO);
+    pacer_init(PACER_RATE);
 
-        radio_packet_t packet = {
-            .left_duty = 0,
-            .right_duty = 0,
-            .dastardly = 0,
-        };
+    if (radio_init()) {
+        panic (LED_ERROR_PIO, 4);
+    }
 
-        radio_tx(&packet);
+    if (control_init(ADXL345_ADDRESS, true)) {
+        panic (LED_ERROR_PIO, 2);
     }
 }
 
+
+int main (void) {
+    int32_t ticks = 0;
+
+    setup();
+
+    while (1) {
+        pacer_wait();
+        ticks++;
+
+        control_update();
+
+        if (ticks > (PACER_RATE / CONTROL_UPDATE_RATE)) {
+            int8_t get_result;
+
+            if ((get_result = control_get_data(&g_control_data)) != 0) {
+                printf ("Acc Error\n");
+            } else {
+                ticks = 0;
+            }
+        } 
+
+        if (ticks > (PACER_RATE / RADIO_SEND_RATE)) {
+            g_radio_packet.left_duty = g_control_data.left_motor;
+            g_radio_packet.right_duty = g_control_data.right_motor;
+            g_radio_packet.parity = 1;
+            if (serial_tx(&g_radio_packet)) {
+                printf ("Tx Error\n");
+            } else {
+                ticks = 0;
+            }
+        }
+
+    }
+}
