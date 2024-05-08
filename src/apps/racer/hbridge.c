@@ -3,16 +3,6 @@
    Date:   2 May 2024
    Descr:  Runs all 4 PWM signals to H bridge 
 */
-// #include <stdint.h>
-// #include <stdbool.h>
-
-// #include <pio.h>
-// #include "pwm.h"
-// #include "delay.h"
-// #include "panic.h"
-
-// #include "target.h"
-
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -41,6 +31,11 @@
 #define START_DUTY_CYCLE 0
 
 uint32_t duty_cycle = 50;
+
+int duty_cycle_right_forwards = 0;
+int duty_cycle_right_backwards = 0;
+int duty_cycle_left_forwards = 0;
+int duty_cycle_left_backwards = 0;
 
 static const pwm_cfg_t pwm1_cfg =
 {
@@ -85,21 +80,23 @@ static const pwm_cfg_t pwm4_cfg =
     .stop_state = PIO_OUTPUT_LOW,
 };
 
-void set_duty(pwm_t pwm1, pwm_t pwm2, pwm_t pwm3, pwm_t pwm4, int duty_cycle_left, int duty_cycle_right) {
-    int duty_cycle_right_forwards = 0;
-    int duty_cycle_right_backwards = 0;
-    int duty_cycle_left_forwards = 0;
-    int duty_cycle_left_backwards = 0;
-    if (duty_cycle_right > 0 || duty_cycle_left > 0) {
-        duty_cycle_right_forwards = duty_cycle_right;
-        duty_cycle_left_forwards = duty_cycle_left;
-        duty_cycle_left_backwards = 0;
-        duty_cycle_right_backwards = 0;
+void set_duty(pwm_t pwm1, pwm_t pwm2, pwm_t pwm3, pwm_t pwm4, int duty_cycle, char direction) {
+    if (duty_cycle > 0) {
+        if(direction == 'r'){
+            duty_cycle_right_forwards = duty_cycle;
+            duty_cycle_right_backwards = 0;
+        } else {
+            duty_cycle_left_forwards = duty_cycle;
+            duty_cycle_left_backwards = 0;
+        }
     } else {
-        duty_cycle_right_backwards = -duty_cycle_right;
-        duty_cycle_left_backwards = -duty_cycle_left;
-        duty_cycle_right_forwards = 0;
-        duty_cycle_left_forwards = 0;
+        if(direction == 'r') {
+            duty_cycle_right_backwards = -duty_cycle;
+            duty_cycle_right_forwards = 0;
+        } else {
+            duty_cycle_left_backwards = -duty_cycle;
+            duty_cycle_left_forwards = 0;
+        }
     }
     // Turn on AIN1 (PWM1) and AIN2 (PWM3), and set BIN1 (PWM2) to maximum and BIN2 (PWM4) to minimum
     pwm_duty_set(pwm1, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, duty_cycle_left_forwards));
@@ -169,10 +166,10 @@ int main (void)
             if (sscanf(buf, "%d %c", &num, &direction) == 2) {
                 if (num >= -98 && num <= 98) {
                     if (direction == 'r') {
-                        set_duty(pwm1, pwm2, pwm3, pwm4, 0, num);
+                        set_duty(pwm1, pwm2, pwm3, pwm4, num, direction);
                         printf("You entered: %d, %c\n", num, direction);
                     } else if (direction == 'l') {
-                        set_duty(pwm1, pwm2, pwm3, pwm4, num, 0);
+                        set_duty(pwm1, pwm2, pwm3, pwm4, num, direction);
                         printf("You entered: %d, %c\n", num, direction);
                     } else {
                         set_duty(pwm1, pwm2, pwm3, pwm4, 0, 0);
