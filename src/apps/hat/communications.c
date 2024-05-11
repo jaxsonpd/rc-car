@@ -84,13 +84,13 @@ int8_t radio_tx (radio_packet_t *packet, bool report_tx) {
     uint8_t num_bytes = 0;
 
     snprintf(buffer, sizeof (buffer), "%d,%d,%d", 
-        packet->right_duty, packet->left_duty, packet->parity);
+        packet->left_duty, packet->right_duty, packet->parity);
 
     num_bytes =  nrf24_write (g_nrf, buffer, RADIO_PAYLOAD_SIZE);
 
     if (report_tx) {
-        printf("tx: \"%d,%d,%d,\" bytes:%d\n", 
-        packet->right_duty, packet->left_duty, packet->parity, num_bytes);
+        printf("tx: \"%3d,%3d,%2d,\" bytes:%d\n", 
+        packet->left_duty, packet->right_duty, packet->parity, num_bytes);
     }
 
 
@@ -101,7 +101,8 @@ int8_t radio_tx (radio_packet_t *packet, bool report_tx) {
 }
 
 int8_t serial_tx (radio_packet_t *packet) {
-    printf("%d,%d,%d\n", packet->right_duty, packet->left_duty, packet->parity);
+    printf("%3d,%3d,%3d\n",
+        packet->left_duty, packet->right_duty, packet->parity);
 
     return 0;
 }

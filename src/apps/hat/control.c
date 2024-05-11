@@ -167,8 +167,8 @@ int8_t control_get_data (control_data_t *control_data) {
     // Calculate the tank tracks
     int8_t steering = calc_steering(control_data->raw_x);
     int8_t throttle = calc_throttle(control_data->raw_y);
-    int16_t left_motor = throttle - steering;
-    int16_t right_motor = throttle + steering;
+    int16_t left_motor = throttle + steering;
+    int16_t right_motor = throttle - steering;
 
     if (left_motor > LEFT_MOTOR_MAX) {
         left_motor = LEFT_MOTOR_MAX;
@@ -178,7 +178,7 @@ int8_t control_get_data (control_data_t *control_data) {
 
     if (right_motor > RIGHT_MOTOR_MAX) {
         right_motor = RIGHT_MOTOR_MAX;
-    } else if (left_motor < RIGHT_MOTOR_MIN) {
+    } else if (right_motor < RIGHT_MOTOR_MIN) {
         right_motor = RIGHT_MOTOR_MIN;
     }
 
