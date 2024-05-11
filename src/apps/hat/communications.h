@@ -26,10 +26,12 @@ int8_t radio_init (void);
 
 /** 
  * @brief Transmit a packet over radio
- * @param *packet pointer to radio packet for transmission
- * @return Bit indicating success or failure of nrf24_write
+ * @param packet pointer to radio packet for transmission
+ * @param report_tx if true will print the tx to serial monitor
+ * 
+ * @return indicating success or failure of nrf24_write
  */
-int8_t radio_tx (radio_packet_t *packet);
+int8_t radio_tx (radio_packet_t *packet, bool report_tx);
 
 /** 
  * @brief Send the radio packet out on the serial line
@@ -40,8 +42,8 @@ int8_t radio_tx (radio_packet_t *packet);
 int8_t serial_tx (radio_packet_t *packet);
 
 /** 
- * @brief Recieve a packet over radio
- * @return Packet recieved or Error
+ * @brief Receive a packet over radio
+ * @return Packet received or Error
  */
 int16_t radio_rx (void);
 

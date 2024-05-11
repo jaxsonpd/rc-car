@@ -61,11 +61,8 @@ int main (void) {
 
         if (ticks > (PACER_RATE / CONTROL_UPDATE_RATE)) {
             int8_t get_result;
-
             if ((get_result = control_get_data(&g_control_data)) != 0) {
                 printf ("Acc Error\n");
-            } else {
-                ticks = 0;
             }
         } 
 
@@ -73,11 +70,14 @@ int main (void) {
             g_radio_packet.left_duty = g_control_data.left_motor;
             g_radio_packet.right_duty = g_control_data.right_motor;
             g_radio_packet.parity = 1;
-            if (serial_tx(&g_radio_packet)) {
+
+            if (radio_tx(&g_radio_packet, true)) {
                 printf ("Tx Error\n");
-            } else {
-                ticks = 0;
             }
+        }
+
+        if (ticks > PACER_RATE) {
+            ticks = 0;
         }
 
     }
