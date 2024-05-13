@@ -1,7 +1,7 @@
-PERIPHERALS = pwm pit
-DRIVERS = usb_serial pacer panic
+PERIPHERALS = pwm pit spi
+DRIVERS = usb_serial pacer panic nrf24
 
-SRC = hbridge.c
+SRC = radio_drive.c radio.c
 
 include ../../boards/board.mk
 

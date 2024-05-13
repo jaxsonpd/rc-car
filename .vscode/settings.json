@@ -5,6 +5,10 @@
     "editor.wordWrap": "wordWrapColumn",
     "cmake.configureOnOpen": false,
     "files.associations": {
-        "pwm.h": "c"
+        "pwm.h": "c",
+        "usb_cdc.h": "c",
+        "stdlib.h": "c",
+        "ctype.h": "c",
+        "nrf24.h": "c"
     }
 }

@@ -1,0 +1,123 @@
+/* File:   radio.c
+   Author: I Patel & D Hawes
+   Date:   9 May 2024
+   Descr:  Recieves radio signal and writes to PWM 
+*/
+#include "nrf24.h"
+#include "spi.h"
+#include "usb_serial.h"
+#include "pio.h"
+#include "delay.h"
+#include "panic.h"
+#include "stdio.h"
+#include "delay.h"
+
+#include "radio.h"
+
+// Defined values from the example code
+#define RADIO_CHANNEL 4                 // match with hat
+#define RADIO_ADDRESS 0x0123456789LL    // will need to calibrate with hat board
+#define RADIO_PAYLOAD_SIZE 32
+
+static nrf24_t *nrf;
+
+// initialise radio transmission
+void radio_init(void)
+{
+    spi_cfg_t spi_cfg =
+        {
+            .channel = 0,
+            .clock_speed_kHz = 1000,
+            .cs = RADIO_CS_PIO,
+            .mode = SPI_MODE_0,
+            .cs_mode = SPI_CS_MODE_FRAME,
+            .bits = 8
+        };
+    nrf24_cfg_t nrf24_cfg =
+        {
+            .channel = RADIO_CHANNEL,
+            .address = RADIO_ADDRESS,
+            .payload_size = RADIO_PAYLOAD_SIZE,
+            .ce_pio = RADIO_CE_PIO,
+            .irq_pio = RADIO_IRQ_PIO,
+            .spi = spi_cfg,
+        };
+    
+
+    // Configure Radio pins.
+    pio_config_set (RADIO_POWER_ENABLE_PIO, PIO_OUTPUT_HIGH);
+    // pio_config_set (RADIO_CONFIG_0, PIO_PULLUP);
+    // pio_config_set (RADIO_CONFIG_1, PIO_PULLUP);
+    delay_ms (10);
+
+    // configure pins to identify transmission mode (main use for testing)
+    pio_config_set (TX_LED, PIO_OUTPUT_LOW);
+    pio_config_set (RX_LED, PIO_OUTPUT_LOW);
+    pacer_init (100);
+
+    // usb_serial_stdio_init ();
+
+    nrf = nrf24_init (&nrf24_cfg);
+    if (! nrf)
+        panic (LED_ERROR_PIO, 2);
+
+// compared to hat code, they include this to change the radio config via DIP switch
+/**
+    uint8_t button_cfg = pio_input_get(RADIO_CONFIG_0) << 1 
+        | pio_input_get (RADIO_CONFIG_1);
+
+    switch (button_cfg) {
+        case 0:
+            nrf24_cfg.channel = 1;
+            break;
+        case 1:
+            nrf24_cfg.channel = 2;
+            break;
+        case 2:
+            nrf24_cfg.channel = 3;
+            break;
+        case 3:
+            nrf24_cfg.channel = 4;
+            break;
+    }
+**/
+
+}
+
+//receives information from hat and returns duty cycle values
+int radio_rx(void)
+{   
+    char buffer[RADIO_PAYLOAD_SIZE + 1];
+    uint8_t bytes;
+
+    //reads radio transmission
+    bytes = nrf24_read (nrf, buffer, RADIO_PAYLOAD_SIZE);
+    if (bytes != 0)
+    {
+        buffer[bytes] = 0;
+        printf ("RX: %s\n", buffer);
+        return buffer;
+    } else {
+        printf ("RX: Failure\n");
+    }
+    delay_ms (100);
+}
+
+// triggered by bump detect and will transmit signal to hat, returns 1 when sent
+int radio_tx(void)
+{
+    char buffer[RADIO_PAYLOAD_SIZE + 1];
+    uint8_t hit_signal = 1; //decide what signal to send for 'hit'
+
+    // transmits 'hit' signal
+    snprintf (buffer, sizeof (buffer), "%d\n", hit_signal); 
+    // printf("Tx: %s\n", buffer); // used for serial check
+    if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE)){
+        return 1;
+    } else {
+        printf ("TX: Failure\n");
+        return 0;
+    }
+    delay_ms(500);
+
+}
