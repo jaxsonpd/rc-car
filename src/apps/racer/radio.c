@@ -15,8 +15,9 @@
 #include "radio.h"
 
 // Defined values from the example code
-#define RADIO_CHANNEL 5                 // match with hat
-#define RADIO_ADDRESS 0x0123456789LL    // will need to calibrate with hat board
+#define RADIO_CHANNEL 4                 // match with hat
+#define RADIO_ADDRESS 0x7284570293LL
+#define RADIO_ADDRESS_TEST 0x0123456789LL    // will need to calibrate with hat board
 #define RADIO_PAYLOAD_SIZE 32
 
 static nrf24_t *nrf;
@@ -102,15 +103,16 @@ int radio_rx(void)
 }
 
 // triggered by bump detect and will transmit signal to hat, returns 1 when sent
-int radio_tx(void)
+int radio_tx(uint8_t hit_signal)
 {
     char buffer[RADIO_PAYLOAD_SIZE + 1];
-    uint8_t hit_signal = 1; //decide what signal to send for 'hit'
+    // uint8_t hit_signal = 1; //decide what signal to send for 'hit'
 
     // transmits 'hit' signal
-    snprintf (buffer, sizeof (buffer), "%d\n", hit_signal); 
+    snprintf (buffer, sizeof (buffer), "%d", hit_signal); 
     // printf("Tx: %s\n", buffer); // used for serial check
     if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE)){
+        printf("TX: %d\n", hit_signal);
         return 1;
     } else {
         // printf ("TX: Failure\n");

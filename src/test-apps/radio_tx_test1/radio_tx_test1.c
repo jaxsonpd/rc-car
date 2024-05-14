@@ -10,7 +10,7 @@
 #include "delay.h"
 #include "panic.h"
 
-#define RADIO_CHANNEL 5
+#define RADIO_CHANNEL 4
 #define RADIO_ADDRESS 0x0123456789LL
 #define RADIO_PAYLOAD_SIZE 32
 
@@ -62,7 +62,7 @@ int main (void)
         pacer_wait ();
         pio_output_toggle (LED_STATUS_PIO);
 
-        snprintf (buffer, sizeof (buffer), "Hello world %d\r\n", count++);
+        snprintf (buffer, sizeof (buffer), "1");
         printf("Tx: %s\n", buffer);
         if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE))
             pio_output_set (LED_ERROR_PIO, 0);

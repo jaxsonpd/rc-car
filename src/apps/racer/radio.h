@@ -17,6 +17,6 @@ void radio_init(void);
 int radio_rx(void);
 
 // transmits hit signal
-int radio_tx(void);
+int radio_tx(uint8_t hit_signal);
 
 #endif

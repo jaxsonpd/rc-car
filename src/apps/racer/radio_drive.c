@@ -11,6 +11,7 @@
 #include "pwm.h"
 #include "delay.h"
 #include "panic.h"
+#include "pacer.h"
 
 #include "radio.h"
 
@@ -26,6 +27,9 @@
 
 #define DELAY_MS 10
 
+#define PACER_RATE 50
+#define RX_RATE 5
+#define TX_RATE 15
 
 // If you are using PWM to drive a motor you will need
 // to choose a lower frequency!
@@ -146,6 +150,8 @@ int main (void)
         panic(LED_ERROR_PIO, 3);
 
     pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
+    
+    pacer_init(PACER_RATE);
 
     pwm1 = pwm_init (&pwm1_cfg);
     if (! pwm1)
@@ -184,35 +190,51 @@ int main (void)
     int8_t right_duty;
     uint8_t dastardly;
     uint8_t parity;
+    uint8_t hit_signal;
+    uint32_t tick_tx = 0;
+    uint32_t tick_rx = 0;
     char radio_message[33];
     bool listening = true;
 
     while (1)
-    {
+    {   
+        pacer_wait();
+        tick_rx++;
+        tick_tx++;
         //check for button press
         if ((pio_input_get (BUMP_DETECT)) == 0) {
             button_press = true;
+        } else {
+            button_press = false;
         }
         // dont include if just testing receive
         // found rf_tester file that has cleaner changing between modes
         if (button_press){  // is active low
+            hit_signal = 1;
+        } else {
+            hit_signal = 0;
+        }
+        if(tick_tx > (PACER_RATE/TX_RATE)) {
+            listening = false;
             pio_output_set(TX_LED, 0); // tells its in tranmitting mode
             pio_output_set (RX_LED, 1);
-            listening = false;
-        } else {
+            tick_tx = 0;
+        } 
+        if (tick_rx > (PACER_RATE/RX_RATE)) {
             pio_output_set (RX_LED, 0);
             pio_output_set(TX_LED, 1);
             listening = true;
-            printf ("listening\n");
+            tick_rx = 0;
+            // printf ("listening\n");
         }
+    
 
         // checks status and calls tx or rx functions accordingly
         if (listening == false) {
             int tx_status;
-            tx_status = radio_tx();
+            tx_status = radio_tx(hit_signal);
             if (tx_status == 1){
-                listening == true;   // once message has been sent, board is back in receiving mode
-                button_press = false;
+                // listening == true;   // once message has been sent, board is back in receiving mode
                 pio_output_set(TX_LED, 1);
             }
             // just use this bottom part if not testing with tx
@@ -229,5 +251,4 @@ int main (void)
         
     }
 
-    return 0;
 }
