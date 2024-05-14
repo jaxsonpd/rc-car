@@ -24,6 +24,7 @@
 #define PACER_RATE 50
 #define CONTROL_UPDATE_RATE 12
 #define RADIO_SEND_RATE 6
+#define RADIO_RECIVE_RATE 1
 
 control_data_t g_control_data; 
 radio_packet_t g_radio_packet;
@@ -69,10 +70,21 @@ int main (void) {
         if (ticks > (PACER_RATE / RADIO_SEND_RATE)) {
             g_radio_packet.left_duty = g_control_data.left_motor;
             g_radio_packet.right_duty = g_control_data.right_motor;
+            g_radio_packet.dastardly = 0;
             g_radio_packet.parity = 1;
 
             if (radio_tx(&g_radio_packet, true)) {
                 printf ("Tx Error\n");
+            }
+        }
+
+        if (ticks > (PACER_RATE / RADIO_SEND_RATE)) {
+            int8_t result = radio_get_bumper();
+
+            if (result == -1) {
+                printf("Bumper Error\n");
+            } else {
+                printf("Rx: %1d\n", result);
             }
         }
 
