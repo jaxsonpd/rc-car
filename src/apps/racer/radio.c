@@ -15,7 +15,7 @@
 #include "radio.h"
 
 // Defined values from the example code
-#define RADIO_CHANNEL 4                 // match with hat
+#define RADIO_CHANNEL 5                 // match with hat
 #define RADIO_ADDRESS 0x0123456789LL    // will need to calibrate with hat board
 #define RADIO_PAYLOAD_SIZE 32
 
@@ -97,9 +97,7 @@ int radio_rx(void)
         buffer[bytes] = 0;
         printf ("RX: %s\n", buffer);
         return buffer;
-    } else {
-        printf ("RX: Failure\n");
-    }
+    } 
     delay_ms (100);
 }
 
@@ -115,7 +113,7 @@ int radio_tx(void)
     if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE)){
         return 1;
     } else {
-        printf ("TX: Failure\n");
+        // printf ("TX: Failure\n");
         return 0;
     }
     delay_ms(500);

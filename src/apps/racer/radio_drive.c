@@ -24,8 +24,6 @@
 #define N_FAULT PA28_PIO // nFault pin
 #define N_SLEEP PA29_PIO // nSleep pin
 
-#define BUMP_DETECT PA27_PIO // bumper pin
-
 #define DELAY_MS 10
 
 
@@ -41,6 +39,8 @@ int duty_cycle_right_forwards = 0;
 int duty_cycle_right_backwards = 0;
 int duty_cycle_left_forwards = 0;
 int duty_cycle_left_backwards = 0;
+
+bool button_press = false;
 
 //Configure all 4 PWM pins
 
@@ -177,6 +177,7 @@ int main (void)
 
     radio_init();   // init radio
     pio_config_set(BUMP_DETECT, PIO_INPUT); // sets bumper pin as input
+    pio_config_set(BUMP_DETECT, PIO_PULLUP);
 
     // creates variables for setting duty
     int8_t left_duty;
@@ -188,9 +189,13 @@ int main (void)
 
     while (1)
     {
+        //check for button press
+        if ((pio_input_get (BUMP_DETECT)) == 0) {
+            button_press = true;
+        }
         // dont include if just testing receive
         // found rf_tester file that has cleaner changing between modes
-        if (BUMP_DETECT == 0){  // is active low
+        if (button_press){  // is active low
             pio_output_set(TX_LED, 0); // tells its in tranmitting mode
             pio_output_set (RX_LED, 1);
             listening = false;
@@ -207,6 +212,7 @@ int main (void)
             tx_status = radio_tx();
             if (tx_status == 1){
                 listening == true;   // once message has been sent, board is back in receiving mode
+                button_press = false;
                 pio_output_set(TX_LED, 1);
             }
             // just use this bottom part if not testing with tx
@@ -220,6 +226,7 @@ int main (void)
         }
 
         set_duty(pwm1, pwm2, pwm3, pwm4, left_duty, right_duty);
+        
     }
 
     return 0;

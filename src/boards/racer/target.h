@@ -39,6 +39,7 @@
 
 /* Button  */
 #define BUTTON_PIO PA16_PIO
+#define BUMP_DETECT PA27_PIO
 
 /* H-bridges   */
 #define MOTOR_LEFT_PWM_PIO PA25_PIO
