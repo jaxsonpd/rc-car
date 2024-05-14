@@ -25,8 +25,6 @@
 
 static nrf24_t *g_nrf;
 
-
-
 // initial radio function
 int8_t radio_init (void) {
     spi_cfg_t spi_cfg = {
@@ -83,14 +81,16 @@ int8_t radio_tx (radio_packet_t *packet, bool report_tx) {
     char buffer[RADIO_PAYLOAD_SIZE + 1];
     uint8_t num_bytes = 0;
 
-    snprintf(buffer, sizeof (buffer), "%d,%d,%d", 
-        packet->left_duty, packet->right_duty, packet->parity);
+    snprintf(buffer, sizeof (buffer), "%d,%d,%d,%d", 
+        packet->left_duty, packet->right_duty, packet->dastardly,
+        packet->parity);
 
     num_bytes =  nrf24_write (g_nrf, buffer, RADIO_PAYLOAD_SIZE);
 
     if (report_tx) {
-        printf("tx: \"%3d,%3d,%2d,\" bytes:%d\n", 
-        packet->left_duty, packet->right_duty, packet->parity, num_bytes);
+        printf("tx: \"%3d,%3d,%1d,%2d,\" bytes:%d\n", 
+        packet->left_duty, packet->right_duty, packet->dastardly,
+        packet->parity, num_bytes);
     }
 
 
@@ -109,5 +109,6 @@ int8_t serial_tx (radio_packet_t *packet) {
     
 // Receive message
 int16_t radio_rx (void) {
+
     return 0;
 }
