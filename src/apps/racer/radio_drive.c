@@ -183,7 +183,7 @@ int main (void)
     int8_t right_duty;
     uint8_t dastardly;
     uint8_t parity;
-    char radio_message;
+    char radio_message[33];
     bool listening = true;
 
     while (1)
@@ -211,7 +211,7 @@ int main (void)
             }
             // just use this bottom part if not testing with tx
         } else {
-            radio_message = radio_rx();
+            radio_message[radio_rx()];
             // will need to check this works the way i think it does
             // read based on what is actually being sent to the car ( compared to hats comms code)
             sscanf(radio_message, "%hhd,%hhd,%hhd", &left_duty, &right_duty, &parity);  // gives warning: passing argument 1 of 'sscanf' makes pointer from integer without a cast [-Wint-conversion]

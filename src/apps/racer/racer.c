@@ -2,7 +2,7 @@
  * @file racer.c
  * @authors Daniel Hawes (dha144@uclive.ac.nz) Isha Patel (Ipa46@uclive.ac.nz)
  * @date 2024-04-24
- * @brief This is the main file for the hat program 
+ * @brief This is the main file for the racer program 
 */
 
 #include <stdint.h>
