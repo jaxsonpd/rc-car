@@ -109,6 +109,28 @@ int8_t serial_tx (radio_packet_t *packet) {
     
 // Receive message
 int16_t radio_rx (void) {
-
     return 0;
+}
+
+// Comms for bumper
+int8_t radio_get_bumper(void) {
+    char buffer[RADIO_PAYLOAD_SIZE + 1];
+    uint8_t bytes;
+
+    bytes = nrf24_read (g_nrf, buffer, RADIO_PAYLOAD_SIZE);
+    if (bytes == 0) {
+        return -1; // Error
+    }
+
+    buffer[bytes] = 0;
+
+    if (bytes == 1) {
+        if (buffer[0] == '0') {
+            return 0;
+        } else if (buffer[0] == '1') {
+            return 1;
+        }
+    } else {
+        return -1; // error
+    }
 }

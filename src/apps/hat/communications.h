@@ -47,4 +47,11 @@ int8_t serial_tx (radio_packet_t *packet);
  */
 int16_t radio_rx (void);
 
+/** 
+ * @brief Read the radio to see if the bumper has been pressed
+ * 
+ * @return 0 if buffer hasn't been press 1 if it has -1 if there has been an error
+ */
+int8_t radio_get_bumper(void);
+
 #endif
