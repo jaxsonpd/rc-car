@@ -63,7 +63,7 @@ int main(void)
         if (bytes != 0)
         {
             buffer[bytes] = 0;
-            printf ("%s\n", buffer);
+            printf ("%s, %d\n", buffer, bytes);
             pio_output_toggle (LED_STATUS_PIO);
         }
 

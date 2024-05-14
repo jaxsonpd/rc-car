@@ -22,9 +22,9 @@
 #include "target.h"
 
 #define PACER_RATE 50
-#define CONTROL_UPDATE_RATE 12
-#define RADIO_SEND_RATE 6
-#define RADIO_RECIVE_RATE 1
+#define CONTROL_UPDATE_RATE 25
+#define RADIO_SEND_RATE 15
+#define RADIO_RECIVE_RATE 15
 
 control_data_t g_control_data; 
 radio_packet_t g_radio_packet;
@@ -37,8 +37,6 @@ void setup (void) {
 
     pio_output_set(LED_STATUS_PIO, LED_ACTIVE);
 
-    pacer_init(PACER_RATE);
-
     if (radio_init()) {
         panic (LED_ERROR_PIO, 4);
     }
@@ -50,24 +48,32 @@ void setup (void) {
 
 
 int main (void) {
-    int32_t ticks = 0;
+    uint32_t ticks_control = 0;
+    uint32_t ticks_tx = 0;
+    uint32_t ticks_rx = 0;
 
     setup();
 
+    pacer_init(PACER_RATE);
+
     while (1) {
         pacer_wait();
-        ticks++;
+        ticks_control++;
+        ticks_rx++;
+        ticks_tx++;
 
         control_update();
 
-        if (ticks > (PACER_RATE / CONTROL_UPDATE_RATE)) {
+        if (ticks_control > (PACER_RATE / CONTROL_UPDATE_RATE)) {
             int8_t get_result;
             if ((get_result = control_get_data(&g_control_data)) != 0) {
                 printf ("Acc Error\n");
             }
+
+            ticks_control = 0;
         } 
 
-        if (ticks > (PACER_RATE / RADIO_SEND_RATE)) {
+        if (ticks_tx > (PACER_RATE / RADIO_SEND_RATE)) {
             g_radio_packet.left_duty = g_control_data.left_motor;
             g_radio_packet.right_duty = g_control_data.right_motor;
             g_radio_packet.dastardly = 0;
@@ -76,21 +82,23 @@ int main (void) {
             if (radio_tx(&g_radio_packet, true)) {
                 printf ("Tx Error\n");
             }
+
+            ticks_tx = 0;
         }
 
-        if (ticks > (PACER_RATE / RADIO_SEND_RATE)) {
+        if (ticks_rx > (PACER_RATE / RADIO_RECIVE_RATE)) {
             int8_t result = radio_get_bumper();
 
             if (result == -1) {
-                printf("Bumper Error\n");
+                printf("                             Bumper Error\n");
             } else {
-                printf("Rx: %1d\n", result);
+                printf("                             Rx: %d\n", result);
+                pio_output_set(LED_STATUS_PIO, !result);
             }
-        }
 
-        if (ticks > PACER_RATE) {
-            ticks = 0;
-        }
+
+            ticks_rx = 0;
+        } 
 
     }
 }

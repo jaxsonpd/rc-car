@@ -19,7 +19,9 @@
 #include "communications.h"
 
 #define RADIO_CHANNEL 4              // Needs to match car communications
-#define RADIO_ADDRESS 0x0123456789LL // Needs to match car communications
+                                     // (not used)
+// #define RADIO_ADDRESS 0x0123456789LL // Needs to match car communications
+#define RADIO_ADDRESS 0x7284570293LL
 #define RADIO_PAYLOAD_SIZE 32
 
 
@@ -65,6 +67,9 @@ int8_t radio_init (void) {
         case 3:
             nrf24_cfg.channel = 4;
             break;
+        default:
+            printf("Channel Select Error\n");
+            break;
     }
 
     g_nrf = nrf24_init(&nrf24_cfg);
@@ -94,10 +99,7 @@ int8_t radio_tx (radio_packet_t *packet, bool report_tx) {
     }
 
 
-    if (! (num_bytes))
-        return 0; // Success
-    else
-        return 1; // Failure
+    return num_bytes == 0;
 }
 
 int8_t serial_tx (radio_packet_t *packet) {
@@ -118,19 +120,19 @@ int8_t radio_get_bumper(void) {
     uint8_t bytes;
 
     bytes = nrf24_read (g_nrf, buffer, RADIO_PAYLOAD_SIZE);
+
     if (bytes == 0) {
         return -1; // Error
     }
 
     buffer[bytes] = 0;
 
-    if (bytes == 1) {
-        if (buffer[0] == '0') {
-            return 0;
-        } else if (buffer[0] == '1') {
-            return 1;
-        }
-    } else {
-        return -1; // error
+    if (buffer[0] == '0') {
+        return 0;
+    } else if (buffer[0] == '1') {
+        return 1;
     }
+
+    return -1; // error
+
 }
