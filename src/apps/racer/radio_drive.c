@@ -28,16 +28,16 @@
 #define DELAY_MS 10
 
 #define PACER_RATE 50
-#define RX_RATE 5
-#define TX_RATE 15
+#define RX_RATE 15
+#define TX_RATE 8
 
 // If you are using PWM to drive a motor you will need
 // to choose a lower frequency!
 #define PWM_FREQ_HZ 2000
 #define START_DUTY_CYCLE 0
 
-uint32_t duty_cycle_right = 50;
-uint32_t duty_cycle_left = 50;
+uint32_t duty_cycle_right = 0;
+uint32_t duty_cycle_left = 0;
 
 int duty_cycle_right_forwards = 0;
 int duty_cycle_right_backwards = 0;
@@ -186,10 +186,10 @@ int main (void)
     pio_config_set(BUMP_DETECT, PIO_PULLUP);
 
     // creates variables for setting duty
-    int8_t left_duty;
-    int8_t right_duty;
-    uint8_t dastardly;
-    uint8_t parity;
+    int left_duty;
+    int right_duty;
+    int dastardly;
+    int parity;
     uint8_t hit_signal;
     uint32_t tick_tx = 0;
     uint32_t tick_rx = 0;
@@ -201,54 +201,50 @@ int main (void)
         pacer_wait();
         tick_rx++;
         tick_tx++;
-        //check for button press
-        if ((pio_input_get (BUMP_DETECT)) == 0) {
-            button_press = true;
-        } else {
-            button_press = false;
-        }
-        // dont include if just testing receive
-        // found rf_tester file that has cleaner changing between modes
-        if (button_press){  // is active low
-            hit_signal = 1;
-        } else {
-            hit_signal = 0;
-        }
+        
+
         if(tick_tx > (PACER_RATE/TX_RATE)) {
-            listening = false;
             pio_output_set(TX_LED, 0); // tells its in tranmitting mode
             pio_output_set (RX_LED, 1);
+            int tx_status;
+
+            //check for button press
+            bool hit_detect = pio_input_get (BUMP_DETECT);
+
+            tx_status = radio_tx(hit_detect);
+            pio_output_set(TX_LED, 1);
+
+            // if (tx_status == 1){
+            //     // listening == true;   // once message has been sent, board is back in receiving mode
+            //     pio_output_set(TX_LED, 1);
+            // }
+            
             tick_tx = 0;
         } 
+
         if (tick_rx > (PACER_RATE/RX_RATE)) {
             pio_output_set (RX_LED, 0);
             pio_output_set(TX_LED, 1);
-            listening = true;
+
+            char buffer[32] = {0};
+
+            radio_rx(buffer);
+
+            printf("%s\n", buffer);
+            printf("TX\n");
+
+            sscanf(buffer, "%d,%d,%d,%d", &left_duty, 
+            &right_duty,&dastardly,&parity);
+
+            printf("Set: %3d,%3d,%2d,%1d\n", left_duty, right_duty, dastardly, 
+            parity);
+
+            set_duty(pwm1, pwm2, pwm3, pwm4, left_duty, right_duty);
+            
             tick_rx = 0;
             // printf ("listening\n");
         }
-    
 
-        // checks status and calls tx or rx functions accordingly
-        if (listening == false) {
-            int tx_status;
-            tx_status = radio_tx(hit_signal);
-            if (tx_status == 1){
-                // listening == true;   // once message has been sent, board is back in receiving mode
-                pio_output_set(TX_LED, 1);
-            }
-            // just use this bottom part if not testing with tx
-        } else {
-            radio_message[radio_rx()];
-            // will need to check this works the way i think it does
-            // read based on what is actually being sent to the car ( compared to hats comms code)
-            sscanf(radio_message, "%hhd,%hhd,%hhd", &left_duty, &right_duty, &parity);  // gives warning: passing argument 1 of 'sscanf' makes pointer from integer without a cast [-Wint-conversion]
-            // dastardly not being sent by hat currently
-
-        }
-
-        set_duty(pwm1, pwm2, pwm3, pwm4, left_duty, right_duty);
         
     }
-
 }
