@@ -14,7 +14,7 @@
 void radio_init(void);
 
 //receives information from hat and returns duty cycle values
-int radio_rx(void);
+int radio_rx(char* buffer);
 
 // transmits hit signal
 int radio_tx(uint8_t hit_signal);

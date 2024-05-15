@@ -15,7 +15,7 @@
 #include "radio.h"
 
 // Defined values from the example code
-#define RADIO_CHANNEL 4                 // match with hat
+#define RADIO_CHANNEL 2                 // match with hat
 #define RADIO_ADDRESS 0x7284570293LL
 #define RADIO_ADDRESS_TEST 0x0123456789LL    // will need to calibrate with hat board
 #define RADIO_PAYLOAD_SIZE 32
@@ -54,7 +54,7 @@ void radio_init(void)
     // configure pins to identify transmission mode (main use for testing)
     pio_config_set (TX_LED, PIO_OUTPUT_LOW);
     pio_config_set (RX_LED, PIO_OUTPUT_LOW);
-    pacer_init (100);
+    // pacer_init (100);
 
     // usb_serial_stdio_init ();
 
@@ -86,20 +86,18 @@ void radio_init(void)
 }
 
 //receives information from hat and returns duty cycle values
-int radio_rx(void)
+int radio_rx(char* buffer)
 {   
-    char buffer[RADIO_PAYLOAD_SIZE + 1];
-    uint8_t bytes;
+    int8_t bytes;
 
     //reads radio transmission
     bytes = nrf24_read (nrf, buffer, RADIO_PAYLOAD_SIZE);
     if (bytes != 0)
     {
         buffer[bytes] = 0;
-        printf ("RX: %s\n", buffer);
-        return buffer;
-    } 
-    delay_ms (100);
+        // printf ("RX: %s\n", buffer);
+    }
+    return bytes; 
 }
 
 // triggered by bump detect and will transmit signal to hat, returns 1 when sent
@@ -112,12 +110,12 @@ int radio_tx(uint8_t hit_signal)
     snprintf (buffer, sizeof (buffer), "%d", hit_signal); 
     // printf("Tx: %s\n", buffer); // used for serial check
     if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE)){
-        printf("TX: %d\n", hit_signal);
+        printf("                 RX: %d\n", hit_signal);
         return 1;
     } else {
         // printf ("TX: Failure\n");
         return 0;
     }
-    delay_ms(500);
+    // delay_ms(500);
 
 }
