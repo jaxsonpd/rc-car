@@ -23,8 +23,8 @@
 
 #define PACER_RATE 50
 #define CONTROL_UPDATE_RATE 25
-#define RADIO_SEND_RATE 15
-#define RADIO_RECIVE_RATE 15
+#define RADIO_SEND_RATE 10
+#define RADIO_RECIVE_RATE 25
 
 control_data_t g_control_data; 
 radio_packet_t g_radio_packet;
@@ -80,7 +80,7 @@ int main (void) {
             g_radio_packet.parity = 1;
 
             if (radio_tx(&g_radio_packet, true)) {
-                printf ("Tx Error\n");
+                // printf ("Tx Error\n");
             }
 
             ticks_tx = 0;
@@ -90,7 +90,7 @@ int main (void) {
             int8_t result = radio_get_bumper();
 
             if (result == -1) {
-                printf("                             Bumper Error\n");
+                // printf("                             Bumper Error\n");
             } else {
                 printf("                             Rx: %d\n", result);
                 pio_output_set(LED_STATUS_PIO, !result);

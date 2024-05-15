@@ -37,11 +37,11 @@
 #define THROTTLE_MIN -100
 
 /// The maximums for duty cycle for the left and right motor
-#define LEFT_MOTOR_MAX 100
-#define LEFT_MOTOR_MIN -100
+#define LEFT_MOTOR_MAX 70
+#define LEFT_MOTOR_MIN -70
 
-#define RIGHT_MOTOR_MAX 100
-#define RIGHT_MOTOR_MIN -100
+#define RIGHT_MOTOR_MAX 70
+#define RIGHT_MOTOR_MIN -70
 
 
 static twi_t adxl345_twi;
