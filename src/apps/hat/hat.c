@@ -20,14 +20,50 @@
 #include "control.h"
 #include "communications.h"
 #include "target.h"
+#include "buzzer.h"
 
-#define PACER_RATE 50
-#define CONTROL_UPDATE_RATE 25
-#define RADIO_SEND_RATE 10
-#define RADIO_RECIVE_RATE 25
+// Game constants
+#define STOP_TIME 3 //< The stop time in seconds
+
+// Pacer Constants in Hz
+#define PACER_RATE 100
+#define CONTROL_UPDATE_RATE 1
+#define RADIO_SEND_RATE 1
+#define RADIO_RECEIVE_RATE 1
+#define BUZZER_UPDATE_RATE 100
+#define LED_UPDATE_RATE 1
 
 control_data_t g_control_data; 
 radio_packet_t g_radio_packet;
+
+bool g_bumper_hit = false;
+bool g_stopped = false;
+
+/** 
+ * @brief Handle the radio tx functionality
+ * 
+ */
+void radio_tx_handler(void) {
+    int8_t get_result;
+    if ((get_result = control_get_data(&g_control_data)) != 0) {
+        printf ("Acc Error\n");
+    }
+
+    if (g_stopped) {
+        g_control_data.left_motor = 0;
+        g_control_data.right_motor = 0;
+    }
+
+    g_radio_packet.left_duty = g_control_data.left_motor;
+    g_radio_packet.right_duty = g_control_data.right_motor;
+    g_radio_packet.dastardly = 0;
+    g_radio_packet.parity = 1;
+
+    if (radio_tx(&g_radio_packet, true)) {
+        // printf ("Tx Error\n");
+    }
+}
+
 
 void setup (void) {
     usb_serial_stdio_init ();
@@ -44,6 +80,10 @@ void setup (void) {
     if (control_init(ADXL345_ADDRESS, true)) {
         panic (LED_ERROR_PIO, 2);
     }
+
+    if (buzzer_init()) {
+        panic (LED_ERROR_PIO, 6);
+    }
 }
 
 
@@ -51,6 +91,10 @@ int main (void) {
     uint32_t ticks_control = 0;
     uint32_t ticks_tx = 0;
     uint32_t ticks_rx = 0;
+    uint32_t ticks_buzzer = 0;
+    uint32_t ticks_led = 0;
+
+    uint32_t ticks_stopped = 0;
 
     setup();
 
@@ -61,44 +105,62 @@ int main (void) {
         ticks_control++;
         ticks_rx++;
         ticks_tx++;
+        ticks_buzzer++;
+        ticks_led++;
+        ticks_stopped++;
 
-        control_update();
+        // Stopped from bumper control
+        if (g_bumper_hit && !g_stopped 
+            && (ticks_stopped > (STOP_TIME+2) * PACER_RATE)) 
+        {
+            g_stopped = true;
+            ticks_stopped = 0;
+            g_bumper_hit = false;
+        } else if (g_stopped && (ticks_stopped > STOP_TIME*PACER_RATE)) {
+            g_stopped = false;
+        } else if (ticks_stopped > (UINT32_MAX - 100)) { // Control over flow
+            ticks_stopped = 0;
+        }
 
+    	// Control Update
         if (ticks_control > (PACER_RATE / CONTROL_UPDATE_RATE)) {
-            int8_t get_result;
-            if ((get_result = control_get_data(&g_control_data)) != 0) {
-                printf ("Acc Error\n");
-            }
-
+            control_update();
             ticks_control = 0;
         } 
 
+        // Radio tx
         if (ticks_tx > (PACER_RATE / RADIO_SEND_RATE)) {
-            g_radio_packet.left_duty = g_control_data.left_motor;
-            g_radio_packet.right_duty = g_control_data.right_motor;
-            g_radio_packet.dastardly = 0;
-            g_radio_packet.parity = 1;
-
-            if (radio_tx(&g_radio_packet, true)) {
-                // printf ("Tx Error\n");
-            }
+            radio_tx_handler();
 
             ticks_tx = 0;
         }
 
-        if (ticks_rx > (PACER_RATE / RADIO_RECIVE_RATE)) {
+        // Radio Rx
+        if (ticks_rx > (PACER_RATE / RADIO_RECEIVE_RATE)) {
             int8_t result = radio_get_bumper();
 
-            if (result == -1) {
-                // printf("                             Bumper Error\n");
-            } else {
-                printf("                             Rx: %d\n", result);
-                pio_output_set(LED_STATUS_PIO, !result);
+            if (result != -1) {
+                printf("                             Rx: %d\n", result);   
+            } else if (result == 1) {
+                g_bumper_hit = true;
             }
-
 
             ticks_rx = 0;
         } 
 
+        // Buzzer sound update
+        if (ticks_buzzer > (PACER_RATE / BUZZER_UPDATE_RATE)) {
+            buzzer_update();
+            ticks_buzzer = 0;
+        }
+
+        // Led strip update
+        if (ticks_led > (PACER_RATE / LED_UPDATE_RATE)) {
+            if (g_stopped) {
+                pio_output_set(LED_STATUS_PIO, LED_ACTIVE);
+            } else {
+                pio_output_set(LED_STATUS_PIO, !LED_ACTIVE);
+            }
+        }   
     }
 }

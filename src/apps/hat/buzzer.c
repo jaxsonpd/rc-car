@@ -12,6 +12,13 @@
 
 #include <pio.h>
 
-void buzzer_init (void) {
-    pio_config_set(BUZZER_PIO PIO_OUTPUT_LOW);
+uint8_t buzzer_init (void) {
+    pio_config_set (BUZZER_PIO, PIO_OUTPUT_HIGH);
+    return 0;
 }
+
+
+void buzzer_update(void) {
+    pio_output_toggle(BUZZER_PIO);
+}
+
