@@ -5,6 +5,21 @@
  * @brief This is the main file for the hat program
  */
 
+/**
+ * Overview:
+ * 
+ * This program does 3 things:
+ * Transmits the accelerometer readings as duty cycles at a rate of 
+ * RADIO_SEND_RATE unless the bumper is hit when it send 0s
+ * If the bumper is hit it activates the led strip
+ * 
+ * It plays a song on the buzzer
+ * 
+ * Receives only when data is available at a rate of RADIO_RX_RATE there is 
+ * no waiting after a successful rx so care should be taken to ensure that tx 
+ * from the other device is not to large.
+*/
+
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -27,10 +42,10 @@
 
 // Pacer Constants in Hz
 #define PACER_RATE 100
-#define CONTROL_UPDATE_RATE 1
-#define RADIO_SEND_RATE 1
-#define RADIO_RECEIVE_RATE 1
-#define BUZZER_UPDATE_RATE 100
+#define CONTROL_UPDATE_RATE 5
+#define RADIO_SEND_RATE 5
+#define RADIO_RECEIVE_RATE 50
+#define BUZZER_UPDATE_RATE 50
 #define LED_UPDATE_RATE 1
 
 control_data_t g_control_data; 
@@ -132,17 +147,22 @@ int main (void) {
         if (ticks_tx > (PACER_RATE / RADIO_SEND_RATE)) {
             radio_tx_handler();
 
+            radio_listen(); // Set back to read mode
             ticks_tx = 0;
         }
 
         // Radio Rx
         if (ticks_rx > (PACER_RATE / RADIO_RECEIVE_RATE)) {
-            int8_t result = radio_get_bumper();
+            if (radio_rx_data_ready()) { // only read if you have too
+                int8_t result = radio_get_bumper();
 
-            if (result != -1) {
-                printf("                             Rx: %d\n", result);   
-            } else if (result == 1) {
-                g_bumper_hit = true;
+                if (result != -1) {
+                    printf("                             Rx: %d\n", result);   
+                } 
+                
+                if (result == 1) {
+                    g_bumper_hit = true;
+                }
             }
 
             ticks_rx = 0;

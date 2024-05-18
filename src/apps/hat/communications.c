@@ -109,9 +109,12 @@ int8_t serial_tx (radio_packet_t *packet) {
     return 0;
 }
     
-// Receive message
-int16_t radio_rx (void) {
-    return 0;
+bool radio_listen(void) {
+    return nrf24_listen (g_nrf);
+}
+
+bool radio_rx_data_ready(void) {
+    return nrf24_is_data_ready(g_nrf);
 }
 
 // Comms for bumper

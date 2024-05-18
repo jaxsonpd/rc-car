@@ -42,16 +42,25 @@ int8_t radio_tx (radio_packet_t *packet, bool report_tx);
 int8_t serial_tx (radio_packet_t *packet);
 
 /** 
- * @brief Receive a packet over radio
- * @return Packet received or Error
- */
-int16_t radio_rx (void);
-
-/** 
  * @brief Read the radio to see if the bumper has been pressed
  * 
  * @return 0 if buffer hasn't been press 1 if it has -1 if there has been an error
  */
 int8_t radio_get_bumper(void);
+
+/** 
+ * @brief Set the radio to listen mode
+ * 
+ * @return result of nrf24_listen
+ */
+bool radio_listen (void);
+
+/** 
+ * @brief Check if there is a message waiting
+ * 
+ * @return 1 if message waiting
+ */
+bool radio_rx_data_ready(void);
+
 
 #endif
