@@ -1,4 +1,4 @@
-PERIPHERALS = pit
+PERIPHERALS = pit pwm
 DRIVERS = pacer usb_serial adxl345 panic led nrf24
 SRC = hat.c control.c circular_buffer.c communications.c buzzer.c
 

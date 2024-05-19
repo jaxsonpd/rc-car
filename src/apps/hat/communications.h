@@ -56,6 +56,20 @@ int8_t radio_get_bumper(void);
 bool radio_listen (void);
 
 /** 
+ * @brief Power down the radio
+ * 
+ * @return 0 if successful
+ */
+bool radio_power_down(void);
+
+/** 
+ * @brief Powers up the radio
+ * 
+ * @return 0 if successful
+ */
+bool radio_power_up(void);
+
+/** 
  * @brief Check if there is a message waiting
  * 
  * @return 1 if message waiting

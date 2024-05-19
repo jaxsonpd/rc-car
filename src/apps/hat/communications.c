@@ -117,6 +117,14 @@ bool radio_rx_data_ready(void) {
     return nrf24_is_data_ready(g_nrf);
 }
 
+bool radio_power_down(void) {
+    return ! nrf24_power_down(g_nrf);
+}
+
+bool radio_power_up(void) {
+    return nrf24_power_up(g_nrf);
+}
+
 // Comms for bumper
 int8_t radio_get_bumper(void) {
     char buffer[RADIO_PAYLOAD_SIZE + 1];

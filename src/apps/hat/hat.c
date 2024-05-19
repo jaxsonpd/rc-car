@@ -45,12 +45,19 @@
 #define CONTROL_UPDATE_RATE 5
 #define RADIO_SEND_RATE 5
 #define RADIO_RECEIVE_RATE 50
-#define BUZZER_UPDATE_RATE 50
+#define BUZZER_UPDATE_RATE 4
 #define LED_UPDATE_RATE 1
+
+// Enables
+bool g_radio_en = false;
+bool g_control_en = false;
+bool g_buzzer_en = true;
+bool g_led_en = true;
 
 control_data_t g_control_data; 
 radio_packet_t g_radio_packet;
 
+// Bumper control
 bool g_bumper_hit = false;
 bool g_stopped = false;
 
@@ -85,11 +92,17 @@ void setup (void) {
 
     pio_config_set(LED_STATUS_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(LED_ERROR_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(RADIO_POWER_ENABLE_PIO, PIO_OUTPUT_HIGH);
 
     pio_output_set(LED_STATUS_PIO, LED_ACTIVE);
 
     if (radio_init()) {
         panic (LED_ERROR_PIO, 4);
+    }
+
+    if (!g_radio_en) {
+        radio_power_down();
+        pio_output_set(RADIO_POWER_ENABLE_PIO, 0);
     }
 
     if (control_init(ADXL345_ADDRESS, true)) {
@@ -138,13 +151,13 @@ int main (void) {
         }
 
     	// Control Update
-        if (ticks_control > (PACER_RATE / CONTROL_UPDATE_RATE)) {
+        if (g_control_en && (ticks_control > (PACER_RATE / CONTROL_UPDATE_RATE))) {
             control_update();
             ticks_control = 0;
         } 
 
         // Radio tx
-        if (ticks_tx > (PACER_RATE / RADIO_SEND_RATE)) {
+        if (g_radio_en && (ticks_tx > (PACER_RATE / RADIO_SEND_RATE))) {
             radio_tx_handler();
 
             radio_listen(); // Set back to read mode
@@ -152,7 +165,7 @@ int main (void) {
         }
 
         // Radio Rx
-        if (ticks_rx > (PACER_RATE / RADIO_RECEIVE_RATE)) {
+        if (g_radio_en && (ticks_rx > (PACER_RATE / RADIO_RECEIVE_RATE))) {
             if (radio_rx_data_ready()) { // only read if you have too
                 int8_t result = radio_get_bumper();
 
@@ -169,13 +182,13 @@ int main (void) {
         } 
 
         // Buzzer sound update
-        if (ticks_buzzer > (PACER_RATE / BUZZER_UPDATE_RATE)) {
+        if (g_buzzer_en && (ticks_buzzer > (PACER_RATE / BUZZER_UPDATE_RATE))) {
             buzzer_update();
             ticks_buzzer = 0;
         }
 
         // Led strip update
-        if (ticks_led > (PACER_RATE / LED_UPDATE_RATE)) {
+        if (g_led_en && (ticks_led > (PACER_RATE / LED_UPDATE_RATE))) {
             if (g_stopped) {
                 pio_output_set(LED_STATUS_PIO, LED_ACTIVE);
             } else {

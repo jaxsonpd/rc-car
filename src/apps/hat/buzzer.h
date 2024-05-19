@@ -21,7 +21,8 @@
 int8_t buzzer_init(void);
 
 /** 
- * @brief Update the buzzer for use in the paced loop
+ * @brief Update the buzzer for use in the paced loop expects to be 
+ * updated at 1 Hz
  * 
  */
 void buzzer_update(void);

@@ -122,7 +122,6 @@ static int8_t calc_steering(int16_t raw_x) {
     return (int8_t)r_control_value;
 }
 
-
 /** 
  * @brief Calculate the throotle level for the var
  * @param raw_y the raw accelerometer value
