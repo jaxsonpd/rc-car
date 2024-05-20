@@ -9,6 +9,8 @@
         "usb_cdc.h": "c",
         "stdlib.h": "c",
         "ctype.h": "c",
-        "nrf24.h": "c"
+        "nrf24.h": "c",
+        "pio.h": "c",
+        "adc.h": "c"
     }
 }

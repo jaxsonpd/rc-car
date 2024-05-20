@@ -1,7 +1,7 @@
-PERIPHERALS = pwm pit spi
+PERIPHERALS = pwm pit spi 
 DRIVERS = usb_serial pacer panic nrf24 ledtape
 
-SRC = test_control.c radio.c motor_control.c
+SRC = test_control.c radio.c motor_control.c 
 
 include ../../boards/board.mk
 

@@ -5,9 +5,12 @@
 */
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
+
 
 #include <pio.h>
 #include "usb_serial.h" 
+#include "nrf24.h"
 #include "pwm.h"
 #include "delay.h"
 #include "panic.h"
@@ -19,7 +22,7 @@
 
 #include "target.h"
 
-#define DELAY_MS 00
+#define DELAY_MS 10
 #define NUM_LEDS 20
 
 #define RAMP_STEP 1 
@@ -61,6 +64,15 @@ void ramp_duty_cycle(int *current_left_duty, int target_left_duty, int *current_
         set_duty(*current_left_duty, *current_right_duty); // Update both motors
         delay_ms(RAMP_DELAY);
     }
+}
+
+void bump_detect(int prev_left_duty, int prev_right_duty) 
+{
+    printf("BUMP\n");
+    set_duty(0, 0);
+    delay_ms(5000);
+    set_duty(-prev_left_duty, -prev_right_duty);
+    delay_ms(1000);
 }
 
 /***
@@ -112,6 +124,7 @@ int main (void)
     int dastardly;
     int parity;
     uint8_t hit_signal;
+    bool hit_detect = false;
     // uint32_t tick_tx = 0;
     // uint32_t tick_rx = 0;
     char radio_message[33];
@@ -122,6 +135,7 @@ int main (void)
         pacer_wait();
 
         delay_ms(DELAY_MS);
+
         char buf[256];
         if (fgets(buf, sizeof(buf), stdin)) {
             int left_motor_duty;
@@ -150,6 +164,16 @@ int main (void)
             }
         }
 
-        ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS*3);        
+        if(!pio_input_get (BUMP_DETECT)) {
+            bump_detect(prev_left_duty, prev_right_duty);
+        }
+
+
+        ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS*3);      
+
+        // while (battery_millivolts () < 5000)
+        // {
+        //     low_battery();
+        // }  
     }
 }
