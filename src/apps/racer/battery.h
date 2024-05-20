@@ -15,10 +15,10 @@
 #include "pacer.h"
 #include "panic.h"
 #include "delay.h"
-#include "button.h"
 
 #define NUM_LEDS 20
 #define BATTERY_VOLTAGE_ADC ADC_CHANNEL_6
+#define LED_ERROR PA0_PIO // red error LED
 
 static int battery_sensor_init (void);
 

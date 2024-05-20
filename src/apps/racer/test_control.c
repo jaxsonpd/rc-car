@@ -16,6 +16,8 @@
 #include "panic.h"
 #include "pacer.h"
 #include "ledtape.h"
+#include "adc.h"
+#include "battery.h"
 
 #include "radio.h"
 #include "motor_control.h"
@@ -93,13 +95,13 @@ int main (void)
     bool asked = false;
 
     pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set (LED_ERROR_PIO, PIO_OUTPUT_HIGH);
     
 
     int i = 0;
     if(usb_serial_stdio_init() < 0) 
         panic(LED_ERROR_PIO, 3);
 
-    pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
     
     pacer_init(PACER_RATE);
 
@@ -143,6 +145,7 @@ int main (void)
             if (sscanf(buf, "%d %d", &left_motor_duty, &right_motor_duty) == 2){
                 // set_duty(0,0);
                 printf("Left Motor: %d Right Motor %d\n", left_motor_duty, right_motor_duty);
+                printf("Battery mV: %d\n", battery_millivolts());
                 if (left_motor_duty >= 80) {
                     left_motor_duty = 10;
                 } else if (left_motor_duty <= -80) {
@@ -169,7 +172,7 @@ int main (void)
         }
 
 
-        ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS*3);      
+        // ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS*3);      
 
         // while (battery_millivolts () < 5000)
         // {

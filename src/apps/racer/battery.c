@@ -12,10 +12,10 @@
 #include "ledtape.h"
 #include "panic.h"
 #include "delay.h"
-#include "button.h"
 
 #define NUM_LEDS 20
 #define BATTERY_VOLTAGE_ADC ADC_CHANNEL_6
+#define LED_ERROR PA0_PIO // red error LED
 
 static adc_t battery_sensor;
 
@@ -40,22 +40,18 @@ uint16_t battery_millivolts (void)
 
     adc_read (battery_sensor, &s, sizeof (s));
 
-    // 33k pull down & 47k pull up gives a scale factor or
-    // 33 / (47 + 33) = 0.4125
-    // 4096 (max ADC reading) * 0.4125 ~= 1690
-    return (uint16_t) ((int)s) * 3300 / 1690;
+    // 68k pull down & 100k pull up gives a scale factor or
+    // 68 / (100 + 68) = 0.4048
+    // 4096 (max ADC reading) * 0.4048 ~= 1658
+    return (uint16_t) ((int)s) * 3300 / 1658;
 }
 
 void low_battery(void) 
 {
-    uint8_t leds[NUM_LEDS * 3];
-    int i;
-    for (i = 0; i < NUM_LEDS; i++)
-    {
-        // Set full green  GRB order
-        leds[i * 3] = 0;
-        leds[i * 3 + 1] = 255;
-        leds[i * 3 + 2] = 0;
-    }
-    ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS*3);  
+    while (battery_millivolts () < 5000)
+        {
+            pio_output_toggle (LED_ERROR);
+            delay_ms (200);
+        }
+  
 }
