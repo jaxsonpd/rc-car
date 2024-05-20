@@ -36,6 +36,7 @@
 #include "communications.h"
 #include "target.h"
 #include "buzzer.h"
+#include "led_tape.h"
 
 // Game constants
 #define STOP_TIME 3 //< The stop time in seconds
@@ -45,7 +46,7 @@
 #define CONTROL_UPDATE_RATE 5
 #define RADIO_SEND_RATE 5
 #define RADIO_RECEIVE_RATE 50
-#define BUZZER_UPDATE_RATE 4
+#define BUZZER_UPDATE_RATE 3
 #define LED_UPDATE_RATE 1
 
 // Enables
@@ -111,6 +112,10 @@ void setup (void) {
 
     if (buzzer_init()) {
         panic (LED_ERROR_PIO, 6);
+    }
+
+    if (led_tape_init()) {
+        panic (LED_ERROR_PIO, 8);
     }
 }
 
@@ -189,11 +194,8 @@ int main (void) {
 
         // Led strip update
         if (g_led_en && (ticks_led > (PACER_RATE / LED_UPDATE_RATE))) {
-            if (g_stopped) {
-                pio_output_set(LED_STATUS_PIO, LED_ACTIVE);
-            } else {
-                pio_output_set(LED_STATUS_PIO, !LED_ACTIVE);
-            }
+            led_tape_update(g_stopped);
+            ticks_led = 0;
         }   
     }
 }

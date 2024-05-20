@@ -20,8 +20,8 @@
 #define MIN_FREQ 2
 #define FREQ_STEP 25
 
-uint32_t tune_length = 63; 
-char g_tune_test[] = "FDGGXXFDGGXXDFDF0GFDEdE00FDGGXGbA0DFDF0GF0DE0AGGXAAAAAAAAAAAGXX";
+uint32_t tune_length = 51; 
+char g_tune_test[] = "FDGGXXFDGGXXDFDFXGFDEdEXXFDGGXGbAXDFDFXGFXDEXAGGXXX";
 // char g_tune_test[] = "DDDAAaGGFFDFGCC";
 
 static const pwm_cfg_t g_buzzer_pwm_cfg = 
