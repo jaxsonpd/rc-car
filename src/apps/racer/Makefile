@@ -1,7 +1,7 @@
 PERIPHERALS = pwm pit spi
 DRIVERS = usb_serial pacer panic nrf24
 
-SRC = radio_drive.c radio.c
+SRC = racer_control.c radio.c motor_control.c
 
 include ../../boards/board.mk
 
