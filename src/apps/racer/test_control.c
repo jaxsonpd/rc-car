@@ -5,27 +5,33 @@
 */
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
+
 
 #include <pio.h>
 #include "usb_serial.h" 
+#include "nrf24.h"
 #include "pwm.h"
 #include "delay.h"
 #include "panic.h"
 #include "pacer.h"
 #include "ledtape.h"
+#include "adc.h"
+#include "battery.h"
 
 #include "radio.h"
 #include "motor_control.h"
 
 #include "target.h"
 
-#define DELAY_MS 00
+#define DELAY_MS 10
 #define NUM_LEDS 20
 
 #define RAMP_STEP 1 
 #define RAMP_DELAY 10
 
 #define PACER_RATE 50
+
 // #define RX_RATE 15
 // #define TX_RATE 8
 
@@ -63,6 +69,16 @@ void ramp_duty_cycle(int *current_left_duty, int target_left_duty, int *current_
     }
 }
 
+void bump_detect(int prev_left_duty, int prev_right_duty) 
+{
+    printf("BUMP\n");
+    set_duty(0, 0);
+    delay_ms(5000);
+    // set_duty(-prev_left_duty, -prev_right_duty);
+    // printf("Left: %d, Right: %d",-prev_left_duty, -prev_right_duty);
+    // delay_ms(2000);
+}
+
 /***
  * adapts h bridge main to include init radio and ready to recieve radio
  * unsure if radio_rx needs to be in the while loop or seperate
@@ -81,13 +97,13 @@ int main (void)
     bool asked = false;
 
     pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set (LED_ERROR_PIO, PIO_OUTPUT_HIGH);
     
 
     int i = 0;
     if(usb_serial_stdio_init() < 0) 
         panic(LED_ERROR_PIO, 3);
 
-    pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
     
     pacer_init(PACER_RATE);
 
@@ -112,6 +128,7 @@ int main (void)
     int dastardly;
     int parity;
     uint8_t hit_signal;
+    bool hit_detect = false;
     // uint32_t tick_tx = 0;
     // uint32_t tick_rx = 0;
     char radio_message[33];
@@ -122,6 +139,8 @@ int main (void)
         pacer_wait();
 
         delay_ms(DELAY_MS);
+
+
         char buf[256];
         if (fgets(buf, sizeof(buf), stdin)) {
             int left_motor_duty;
@@ -129,6 +148,7 @@ int main (void)
             if (sscanf(buf, "%d %d", &left_motor_duty, &right_motor_duty) == 2){
                 // set_duty(0,0);
                 printf("Left Motor: %d Right Motor %d\n", left_motor_duty, right_motor_duty);
+                printf("Channel: %d\n", radio_channel_number_get());
                 if (left_motor_duty >= 80) {
                     left_motor_duty = 10;
                 } else if (left_motor_duty <= -80) {
@@ -139,17 +159,23 @@ int main (void)
                 } else if (right_motor_duty <= -80) {
                     right_motor_duty = -10;
                 }
-                if (right_motor_duty == 0 || left_motor_duty == 0) {
-                    set_duty(0, 0);
-                } else {
-                    ramp_duty_cycle(&prev_left_duty, left_motor_duty, &prev_right_duty, right_motor_duty);
-                    prev_right_duty=right_motor_duty;
-                    prev_left_duty=left_motor_duty;
-                }
+                ramp_duty_cycle(&prev_left_duty, left_motor_duty, &prev_right_duty, right_motor_duty);
+                prev_right_duty=right_motor_duty;
+                prev_left_duty=left_motor_duty;
                 // set_duty(0, 0);
             }
         }
 
-        ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS*3);        
+        if(!pio_input_get (BUMP_DETECT)) {
+            bump_detect(prev_left_duty, prev_right_duty);
+        }
+
+
+        // ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS*3);      
+
+        // while (battery_millivolts () < 5000)
+        // {
+        //     low_battery();
+        // }  
     }
 }
