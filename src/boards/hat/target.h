@@ -61,6 +61,7 @@
 
 /* LED tape  */
 #define LEDTAPE_PIO PA5_PIO
+#define NUM_LEDS 22
 
 /* Buzzer */
 #define BUZZER_PIO PB1_PIO
