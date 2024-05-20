@@ -44,15 +44,15 @@
 // Pacer Constants in Hz
 #define PACER_RATE 100
 #define CONTROL_UPDATE_RATE 5
-#define RADIO_SEND_RATE 5
+#define RADIO_SEND_RATE 20
 #define RADIO_RECEIVE_RATE 50
 #define BUZZER_UPDATE_RATE 3
-#define LED_UPDATE_RATE 1
+#define LED_UPDATE_RATE 2
 
 // Enables
-bool g_radio_en = false;
-bool g_control_en = false;
-bool g_buzzer_en = true;
+bool g_radio_en = true;
+bool g_control_en = true;
+bool g_buzzer_en = false;
 bool g_led_en = true;
 
 control_data_t g_control_data; 
@@ -113,6 +113,10 @@ void setup (void) {
     if (buzzer_init()) {
         panic (LED_ERROR_PIO, 6);
     }
+
+    if (!g_buzzer_en) {
+        pio_config_set(BUZZER_PIO, PIO_OUTPUT_LOW);
+    } 
 
     if (led_tape_init()) {
         panic (LED_ERROR_PIO, 8);

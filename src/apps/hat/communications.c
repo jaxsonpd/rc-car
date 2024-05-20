@@ -72,6 +72,8 @@ int8_t radio_init (void) {
             break;
     }
 
+    nrf24_cfg.channel = 2;
+
     g_nrf = nrf24_init(&nrf24_cfg);
 
     if (! g_nrf) {
@@ -93,9 +95,8 @@ int8_t radio_tx (radio_packet_t *packet, bool report_tx) {
     num_bytes =  nrf24_write (g_nrf, buffer, RADIO_PAYLOAD_SIZE);
 
     if (report_tx) {
-        printf("tx: \"%3d,%3d,%1d,%2d,\" bytes:%d\n", 
-        packet->left_duty, packet->right_duty, packet->dastardly,
-        packet->parity, num_bytes);
+        printf("tx: \"%s\" bytes:%d\n", 
+        buffer, num_bytes);
     }
 
 
