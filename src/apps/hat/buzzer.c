@@ -20,17 +20,15 @@
 #define MIN_FREQ 2
 #define FREQ_STEP 25
 
-uint32_t tune_length = 48; 
-uint16_t g_tune_test[] = {350, 294, 392, 0, 0, 350, 294, 392, 0, 0, 294, 350, 
-                        294, 350, 392, 350, 0, 294, 330, 277, 330, 0, 0, 350, 
-                        294, 392, 0, 0, 392, 466, 440, 0, 284, 350, 294, 350,
-                        0, 392, 350, 294, 330, 440, 392, 440, 392, 330, 0, 0};
+uint32_t tune_length = 63; 
+char g_tune_test[] = "FDGGXXFDGGXXDFDF0GFDEdE00FDGGXGbA0DFDF0GF0DE0AGGXAAAAAAAAAAAGXX";
+// char g_tune_test[] = "DDDAAaGGFFDFGCC";
 
 static const pwm_cfg_t g_buzzer_pwm_cfg = 
 {
     .pio = BUZZER_PIO,
-    .period = PWM_PERIOD_DIVISOR (4000),
-    .duty = PWM_DUTY_DIVISOR (4000, 50),
+    .period = PWM_PERIOD_DIVISOR (262),
+    .duty = PWM_DUTY_DIVISOR (262, 50),
     .align = PWM_ALIGN_LEFT,
     .polarity = PWM_POLARITY_HIGH,
     .stop_state = PIO_OUTPUT_LOW
@@ -51,34 +49,87 @@ int8_t buzzer_init (void) {
 }
 
 
+
+/** 
+ * @brief Convert the note to a frequency only supports 4th octiv atm 
+ * @param note the note to play A->G - lower case indicates flat
+ * 
+ * @return the frequency of the note in hz
+ */
+static uint32_t note_to_freq(char note) {
+    static uint32_t prev_freq = 262;
+    uint32_t freq = 262;
+    switch (note) {
+        case 'a':
+            freq = 208;
+            break;
+        case 'A':
+            freq = 220;
+            break;
+        case 'b':
+            freq = 233;
+            break;
+        case 'B':
+            freq = 123;
+            break;
+        case 'C':
+            freq = 262;
+            break;
+        case 'd':
+            freq = 277;
+            break;
+        case 'D':
+            freq = 294;
+            break;
+        case 'e':
+            freq = 311;
+            break;
+        case 'E':
+            freq = 330;
+            break;
+        case 'F':
+            freq = 349;
+            break;
+        case 'g':
+            freq = 370;
+            break;
+        case 'G':
+            freq = 392;
+            break;
+        default:
+            freq = prev_freq;
+            break;
+    }
+    prev_freq = freq;
+    return freq;
+}
+
+
 void buzzer_update(void) {
-    // static pwm_frequency_t current_freq = MIN_FREQ;
-
-    // current_freq += FREQ_STEP;
-
-    // if (current_freq > MAX_FREQ) {
-    //     current_freq = MIN_FREQ;
-    // }
-
-    // //pwm_duty_set(g_buzzer_pwm, PWM_DUTY_DIVISOR(4000, current_freq));
-    // pwm_frequency_set(g_buzzer_pwm, current_freq);
-
-    // printf("Current freq: %ld\n", (uint32_t)current_freq);
 
     static uint32_t note_count = 0;
+    static bool prev_zero = false;
 
     note_count ++;
     if (note_count > tune_length) {
         note_count = 0;
     }
 
-    uint16_t note = g_tune_test[note_count];
+    char note = g_tune_test[note_count];
 
-    if (!note == 0) {
-        pwm_frequency_set(g_buzzer_pwm, note);
+    if (note == 'X') {
+        pwm_duty_set(g_buzzer_pwm, PWM_DUTY_DIVISOR(262, 0));
+        prev_zero = true;
+    } else {
+        if (prev_zero) {
+            pwm_duty_set(g_buzzer_pwm, PWM_DUTY_DIVISOR(262, 50));
+            prev_zero = false;
+        }
+
+        pwm_frequency_set(g_buzzer_pwm, note_to_freq(note));
     }
     
 
-    printf("Set: %d", note);
+    printf("Set: %c\n", note);
 }
 
