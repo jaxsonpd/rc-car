@@ -31,6 +31,7 @@
 #define RAMP_DELAY 10
 
 #define PACER_RATE 50
+
 // #define RX_RATE 15
 // #define TX_RATE 8
 
@@ -73,8 +74,9 @@ void bump_detect(int prev_left_duty, int prev_right_duty)
     printf("BUMP\n");
     set_duty(0, 0);
     delay_ms(5000);
-    set_duty(-prev_left_duty, -prev_right_duty);
-    delay_ms(1000);
+    // set_duty(-prev_left_duty, -prev_right_duty);
+    // printf("Left: %d, Right: %d",-prev_left_duty, -prev_right_duty);
+    // delay_ms(2000);
 }
 
 /***
@@ -138,6 +140,7 @@ int main (void)
 
         delay_ms(DELAY_MS);
 
+
         char buf[256];
         if (fgets(buf, sizeof(buf), stdin)) {
             int left_motor_duty;
@@ -145,7 +148,7 @@ int main (void)
             if (sscanf(buf, "%d %d", &left_motor_duty, &right_motor_duty) == 2){
                 // set_duty(0,0);
                 printf("Left Motor: %d Right Motor %d\n", left_motor_duty, right_motor_duty);
-                printf("Battery mV: %d\n", battery_millivolts());
+                printf("Channel: %d\n", radio_channel_number_get());
                 if (left_motor_duty >= 80) {
                     left_motor_duty = 10;
                 } else if (left_motor_duty <= -80) {
@@ -156,13 +159,9 @@ int main (void)
                 } else if (right_motor_duty <= -80) {
                     right_motor_duty = -10;
                 }
-                if (right_motor_duty == 0 || left_motor_duty == 0) {
-                    set_duty(0, 0);
-                } else {
-                    ramp_duty_cycle(&prev_left_duty, left_motor_duty, &prev_right_duty, right_motor_duty);
-                    prev_right_duty=right_motor_duty;
-                    prev_left_duty=left_motor_duty;
-                }
+                ramp_duty_cycle(&prev_left_duty, left_motor_duty, &prev_right_duty, right_motor_duty);
+                prev_right_duty=right_motor_duty;
+                prev_left_duty=left_motor_duty;
                 // set_duty(0, 0);
             }
         }

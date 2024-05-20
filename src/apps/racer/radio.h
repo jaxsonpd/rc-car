@@ -10,6 +10,7 @@
 #define TX_LED PA1_PIO  //STAT0 Blue
 #define RX_LED PA0_PIO //STAT1  Red
 
+int radio_channel_number_get(void);
 // initialise radio transmission and configure pins
 void radio_init(void);
 

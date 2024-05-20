@@ -38,6 +38,8 @@ uint16_t battery_millivolts (void)
 {
     adc_sample_t s;
 
+    battery_sensor_init();
+
     adc_read (battery_sensor, &s, sizeof (s));
 
     // 68k pull down & 100k pull up gives a scale factor or

@@ -22,6 +22,12 @@
 
 static nrf24_t *nrf;
 
+int radio_channel_number;
+
+int radio_channel_number_get(void) {
+    return radio_channel_number;
+}
+
 // initialise radio transmission
 void radio_init(void)
 {
@@ -47,13 +53,13 @@ void radio_init(void)
 
     // Configure Radio pins.
     pio_config_set (RADIO_POWER_ENABLE_PIO, PIO_OUTPUT_HIGH);
-    // pio_config_set (RADIO_CONFIG_0, PIO_PULLUP);
-    // pio_config_set (RADIO_CONFIG_1, PIO_PULLUP);
+    pio_config_set (RADIO_CONFIG_0, PIO_PULLUP);
+    pio_config_set (RADIO_CONFIG_1, PIO_PULLUP);
     delay_ms (10);
 
     // configure pins to identify transmission mode (main use for testing)
-    pio_config_set (TX_LED, PIO_OUTPUT_LOW);
-    pio_config_set (RX_LED, PIO_OUTPUT_LOW);
+    // pio_config_set (TX_LED, PIO_OUTPUT_LOW);
+    // pio_config_set (RX_LED, PIO_OUTPUT_LOW);
     // pacer_init (100);
 
     // usb_serial_stdio_init ();
@@ -63,7 +69,7 @@ void radio_init(void)
         panic (LED_ERROR_PIO, 2);
 
 // compared to hat code, they include this to change the radio config via DIP switch
-/**
+
     uint8_t button_cfg = pio_input_get(RADIO_CONFIG_0) << 1 
         | pio_input_get (RADIO_CONFIG_1);
 
@@ -81,7 +87,9 @@ void radio_init(void)
             nrf24_cfg.channel = 4;
             break;
     }
-**/
+
+    radio_channel_number = nrf24_cfg.channel;
+    radio_channel_number_get();
 
 }
 
