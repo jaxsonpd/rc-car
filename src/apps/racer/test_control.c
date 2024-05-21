@@ -27,6 +27,8 @@
 #define DELAY_MS 10
 #define NUM_LEDS 20
 
+#define BATTERY_RATE 1
+
 #define RAMP_STEP 1
 #define RAMP_DELAY 10
 
@@ -94,6 +96,8 @@ int main (void)
     // init pwm //
     motor_init();
 
+    battery_sensor_init();
+
     bool asked = false;
 
     pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
@@ -128,6 +132,7 @@ int main (void)
     int dastardly;
     int parity;
     uint8_t hit_signal;
+    uint32_t tick_battery = 0;
     bool hit_detect = false;
     // uint32_t tick_tx = 0;
     // uint32_t tick_rx = 0;
@@ -137,8 +142,9 @@ int main (void)
     while (1)
     {   
         pacer_wait();
+        tick_battery++;
 
-        delay_ms(DELAY_MS);
+        // delay_ms(DELAY_MS);
 
 
         char buf[256];
@@ -149,6 +155,7 @@ int main (void)
                 // set_duty(0,0);
                 printf("Left Motor: %d Right Motor %d\n", left_motor_duty, right_motor_duty);
                 printf("Channel: %d\n", radio_channel_number_get());
+                printf("BATTERY: %d\n",  battery_millivolts());
                 if (left_motor_duty >= 80) {
                     left_motor_duty = 80;
                 } else if (left_motor_duty <= -80) {
@@ -173,9 +180,17 @@ int main (void)
 
         led_tape_driving();     
 
-        // while (battery_millivolts () < 5000)
-        // {
-        //     low_battery();
-        // }  
+        //Check Battery Value
+        if (tick_battery>(PACER_RATE/BATTERY_RATE)) {
+            if (battery_millivolts() < 2553)
+            {
+                pio_output_low(LED_ERROR_PIO);
+                pio_output_high(LED_STATUS_PIO);
+            }  else {
+                pio_output_low(LED_STATUS_PIO);
+                pio_output_high(LED_ERROR_PIO);
+            }
+            tick_battery=0;
+        }
     }
 }

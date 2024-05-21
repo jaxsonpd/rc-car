@@ -46,12 +46,12 @@ uint16_t battery_millivolts (void)
     return (uint16_t) ((int)s);
 }
 
-void low_battery(void) 
-{
-    while (battery_millivolts () < 2553)
-        {
-            pio_output_toggle (LED_ERROR);
-            delay_ms (200);
-        }
+// void low_battery(void) 
+// {
+//     while (battery_millivolts () < 2553)
+//         {
+//             pio_output_toggle (LED_ERROR);
+//             delay_ms (200);
+//         }
   
-}
+// }

@@ -64,10 +64,6 @@ void radio_init(void)
 
     // usb_serial_stdio_init ();
 
-    nrf = nrf24_init (&nrf24_cfg);
-    if (! nrf)
-        panic (LED_ERROR_PIO, 2);
-
 // compared to hat code, they include this to change the radio config via DIP switch
 
     uint8_t button_cfg = pio_input_get(RADIO_CONFIG_0) << 1 
@@ -87,6 +83,10 @@ void radio_init(void)
             nrf24_cfg.channel = 4;
             break;
     }
+
+    nrf = nrf24_init (&nrf24_cfg);
+    // if (! nrf)
+    //     panic (LED_ERROR_PIO, 2);
 
     radio_channel_number = nrf24_cfg.channel;
     radio_channel_number_get();

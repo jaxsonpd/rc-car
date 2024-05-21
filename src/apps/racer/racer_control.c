@@ -25,6 +25,7 @@
 #define PACER_RATE 100
 #define RX_RATE 50
 #define TX_RATE 10
+#define BATTERY_RATE 1
 
 #define RAMP_STEP 1
 #define RAMP_DELAY 10
@@ -90,14 +91,13 @@ int main (void)
 
     bool asked = false;
 
-    pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
-    
+    // pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);    
 
     int i = 0;
     if(usb_serial_stdio_init() < 0) 
         panic(LED_ERROR_PIO, 3);
 
-    pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
+    // pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
     
     pacer_init(PACER_RATE);
 
@@ -106,6 +106,9 @@ int main (void)
     radio_init();   // init radio
     pio_config_set(BUMP_DETECT, PIO_INPUT); // sets bumper pin as input
     pio_config_set(BUMP_DETECT, PIO_PULLUP);
+
+    pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set (LED_ERROR_PIO, PIO_OUTPUT_LOW);
 
     // creates variables for setting duty
     int prev_left_duty = 0;
@@ -117,6 +120,7 @@ int main (void)
     uint8_t hit_signal;
     uint32_t tick_tx = 0;
     uint32_t tick_rx = 0;
+    uint32_t tick_battery = 0;
     char radio_message[33];
     bool listening = true;
     bool hit_detect = true;
@@ -127,6 +131,7 @@ int main (void)
         pacer_wait();
         tick_rx++;
         tick_tx++;
+        tick_battery++;
 
         // set_duty(0, 0);
         hit_detect = pio_input_get(BUMP_DETECT);
@@ -135,12 +140,12 @@ int main (void)
         printf("BATTERY: %d\n", battery_millivolts());
 
         if(tick_tx > (PACER_RATE/TX_RATE)) {
-            pio_output_set(TX_LED, 0); // tells its in tranmitting mode
-            pio_output_set (RX_LED, 1);
+            // pio_output_set(TX_LED, 0); // tells its in tranmitting mode
+            // pio_output_set (RX_LED, 1);
             int tx_status;
 
             tx_status = radio_tx(hit_detect_flag);
-            pio_output_set(TX_LED, 1);
+            // pio_output_set(TX_LED, 1);
 
             if (tx_status == 32) {
                 hit_detect_flag = true;
@@ -153,8 +158,8 @@ int main (void)
         if (tick_rx > (PACER_RATE/RX_RATE)) {
             if (radio_rx_data_ready()) {
                 printf("Listening\n");
-                pio_output_set (RX_LED, 0);
-                pio_output_set(TX_LED, 1);
+                // pio_output_set (RX_LED, 0);
+                // pio_output_set(TX_LED, 1);
 
                 char buffer[32] = {0};
 
@@ -178,9 +183,10 @@ int main (void)
                 } else if (right_motor_duty <= -50) {
                     right_motor_duty = -50;
                 }
+
                 if (left_motor_duty<=5 && left_motor_duty>=-5) {
                     left_motor_duty = 0;
-                } else if (right_motor_duty<=5 && left_motor_duty>=-5) {
+                } else if (right_motor_duty<=5 && right_motor_duty>=-5) {
                     right_motor_duty = 0;
                 }
                 // ramp_duty_cycle(&prev_left_duty, left_motor_duty, &prev_right_duty, right_motor_duty);
@@ -194,12 +200,18 @@ int main (void)
 
         led_tape_driving();
 
-        if (battery_millivolts() < 2553)
-        {
-            printf("LOW BATTERY\n");
-            low_battery();
-        }  else {
-            pio_output_toggle(LED_STATUS_PIO);
+        //Check Battery Value
+        if (tick_battery>(PACER_RATE/BATTERY_RATE)) {
+            if (battery_millivolts() < 2553)
+            {
+                pio_output_toggle(LED_ERROR_PIO);
+                pio_output_high(LED_STATUS_PIO);
+                delay_ms(10);
+            }  else {
+                pio_output_low(LED_STATUS_PIO);
+                pio_output_high(LED_ERROR_PIO);
+            }
+            tick_battery=0;
         }
         
     }

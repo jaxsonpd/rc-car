@@ -24,6 +24,6 @@ int battery_sensor_init (void);
 
 uint16_t battery_millivolts (void);
 
-void low_battery(void); 
+// void low_battery(void); 
 
 #endif
