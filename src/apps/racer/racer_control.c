@@ -20,11 +20,54 @@
 
 #define DELAY_MS 10
 
-#define PACER_RATE 50
-#define RX_RATE 15
-#define TX_RATE 8
+#define PACER_RATE 100
+#define RX_RATE 50
+#define TX_RATE 10
+
+#define RAMP_STEP 1
+#define RAMP_DELAY 10
 
 bool button_press = false;
+
+// void ramp_duty_cycle(int *current_left_duty, int target_left_duty, int *current_right_duty, int target_right_duty) {
+//     while (*current_left_duty != target_left_duty || *current_right_duty != target_right_duty) {
+//         printf("RAMP\n");
+//         // printf("Left Motor: %d, Right Motor: %d", current_left_duty, current_right_duty);
+//         if (*current_left_duty < target_left_duty) {
+//             *current_left_duty += RAMP_STEP;
+//             if (*current_left_duty > target_left_duty) {
+//                 *current_left_duty = target_left_duty;
+//             }
+//         } else if (*current_left_duty > target_left_duty) {
+//             *current_left_duty -= RAMP_STEP;
+//             if (*current_left_duty < target_left_duty) {
+//                 *current_left_duty = target_left_duty;
+//             }
+//         }
+
+//         if (*current_right_duty < target_right_duty) {
+//             *current_right_duty += RAMP_STEP;
+//             if (*current_right_duty > target_right_duty) {
+//                 *current_right_duty = target_right_duty;
+//             }
+//         } else if (*current_right_duty > target_right_duty) {
+//             *current_right_duty -= RAMP_STEP;
+//             if (*current_right_duty < target_right_duty) {
+//                 *current_right_duty = target_right_duty;
+//             }
+//         }
+
+//         set_duty(*current_left_duty, *current_right_duty); // Update both motors
+//         delay_ms(RAMP_DELAY);
+//     }
+//     printf("Ramp done\n");
+// }
+
+// void ramp_duty_cycle(int *current_left_duty, int target_left_duty, int *current_right_duty, int target_right_duty) 
+// {
+//     printf("MOTOR SET %d, %d\n", target_left_duty, target_right_duty);
+//     set_duty(target_left_duty, target_right_duty);
+// }
 
 /***
  * adapts h bridge main to include init radio and ready to recieve radio
@@ -61,8 +104,10 @@ int main (void)
     pio_config_set(BUMP_DETECT, PIO_PULLUP);
 
     // creates variables for setting duty
-    int left_duty;
-    int right_duty;
+    int prev_left_duty = 0;
+    int prev_right_duty = 0;
+    int left_motor_duty = 0;
+    int right_motor_duty = 0;
     int dastardly;
     int parity;
     uint8_t hit_signal;
@@ -76,6 +121,8 @@ int main (void)
         pacer_wait();
         tick_rx++;
         tick_tx++;
+
+        // set_duty(0, 0);
         
 
         if(tick_tx > (PACER_RATE/TX_RATE)) {
@@ -88,34 +135,49 @@ int main (void)
 
             tx_status = radio_tx(hit_detect);
             pio_output_set(TX_LED, 1);
-
-            // if (tx_status == 1){
-            //     // listening == true;   // once message has been sent, board is back in receiving mode
-            //     pio_output_set(TX_LED, 1);
-            // }
             
+            radio_listen();
             tick_tx = 0;
         } 
 
         if (tick_rx > (PACER_RATE/RX_RATE)) {
-            pio_output_set (RX_LED, 0);
-            pio_output_set(TX_LED, 1);
+            if (radio_rx_data_ready()) {
+                printf("Listening\n");
+                pio_output_set (RX_LED, 0);
+                pio_output_set(TX_LED, 1);
 
-            char buffer[32] = {0};
+                char buffer[32] = {0};
 
-            radio_rx(buffer);
+                radio_rx(buffer);
 
-            printf("%s\n", buffer);
-            printf("TX\n");
+                printf("%s\n", buffer);
+                printf("TX\n");
 
-            sscanf(buffer, "%d,%d,%d,%d", &left_duty, 
-            &right_duty,&dastardly,&parity);
+                sscanf(buffer, "%d,%d,%d,%d", &left_motor_duty, 
+                &right_motor_duty,&dastardly,&parity);
 
-            printf("Set: %3d,%3d,%2d,%1d\n", left_duty, right_duty, dastardly, 
-            parity);
+                printf("Set: %3d,%3d,%2d,%1d\n", left_motor_duty, right_motor_duty, dastardly, parity);
 
-            set_duty(left_duty, right_duty);
-            
+                if (left_motor_duty >= 50) {
+                    left_motor_duty = 50;
+                } else if (left_motor_duty <= -50) {
+                    left_motor_duty = -50;
+                }
+                if (right_motor_duty >= 50) {
+                    right_motor_duty = 50;
+                } else if (right_motor_duty <= -50) {
+                    right_motor_duty = -50;
+                }
+                if (left_motor_duty<=5 && left_motor_duty>=-5) {
+                    left_motor_duty = 0;
+                } else if (right_motor_duty<=5 && left_motor_duty>=-5) {
+                    right_motor_duty = 0;
+                }
+                // ramp_duty_cycle(&prev_left_duty, left_motor_duty, &prev_right_duty, right_motor_duty);
+                // prev_right_duty=right_motor_duty;
+                // prev_left_duty=left_motor_duty;
+                set_duty(left_motor_duty, right_motor_duty);
+            }
             tick_rx = 0;
             // printf ("listening\n");
         }

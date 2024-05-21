@@ -22,14 +22,14 @@
 #define PWM3_PIO PB1_PIO //AIN2
 #define PWM4_PIO PB0_PIO //BIN2
 
-#define N_FAULT PA28_PIO // nFault pin
+#define N_FAULT PA28_PIO // nFault pinB
 #define N_SLEEP PA29_PIO // nSleep pin
 
 #define DELAY_MS 10
 
-#define PACER_RATE 50
-#define RX_RATE 15
-#define TX_RATE 8
+#define PACER_RATE 100
+#define RX_RATE 50
+#define TX_RATE 10
 
 // If you are using PWM to drive a motor you will need
 // to choose a lower frequency!

@@ -15,7 +15,7 @@
 #include "radio.h"
 
 // Defined values from the example code
-#define RADIO_CHANNEL 2                 // match with hat
+#define RADIO_CHANNEL 4                 // match with hat
 #define RADIO_ADDRESS 0x7284570293LL
 #define RADIO_ADDRESS_TEST 0x0123456789LL    // will need to calibrate with hat board
 #define RADIO_PAYLOAD_SIZE 32
@@ -126,4 +126,12 @@ int radio_tx(uint8_t hit_signal)
     }
     // delay_ms(500);
 
+}
+
+bool radio_listen(void){
+    return nrf24_listen(nrf);
+}
+
+bool radio_rx_data_ready(void){
+    return nrf24_is_data_ready(nrf);
 }

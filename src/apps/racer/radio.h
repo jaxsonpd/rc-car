@@ -20,4 +20,8 @@ int radio_rx(char* buffer);
 // transmits hit signal
 int radio_tx(uint8_t hit_signal);
 
+bool radio_listen(void);
+
+bool radio_rx_data_ready(void);
+
 #endif

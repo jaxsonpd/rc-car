@@ -72,7 +72,7 @@ int8_t radio_init (void) {
             break;
     }
 
-    nrf24_cfg.channel = 2;
+    nrf24_cfg.channel = 4;
 
     g_nrf = nrf24_init(&nrf24_cfg);
 
