@@ -137,3 +137,14 @@ bool radio_listen(void){
 bool radio_rx_data_ready(void){
     return nrf24_is_data_ready(nrf);
 }
+
+bool radio_power_down(void) {
+    bool result = nrf24_power_down(nrf);
+    pio_output_low(RADIO_POWER_ENABLE_PIO);
+    return !result;
+}
+
+bool radio_power_up(void) {
+    pio_output_high(RADIO_POWER_ENABLE_PIO);
+    return nrf24_power_up(nrf);
+}

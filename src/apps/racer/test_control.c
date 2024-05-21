@@ -18,6 +18,7 @@
 #include "led_tape.h"
 #include "adc.h"
 #include "battery.h"
+#include "mcu_sleep.h"
 
 #include "radio.h"
 #include "motor_control.h"
@@ -28,6 +29,7 @@
 #define NUM_LEDS 20
 
 #define BATTERY_RATE 1
+#define SLEEP_CHECK_RATE 1
 #define BUMP_OFF_RATE 500
 
 #define RAMP_STEP 1
@@ -39,6 +41,27 @@
 // #define TX_RATE 8
 
 bool button_press = false;
+
+void sleepify(void) {
+    mcu_sleep_cfg_t sleep_cfg = {.mode=MCU_SLEEP_MODE_BACKUP};
+    mcu_sleep_wakeup_cfg_t sleep_wakeup_cfg = {
+        .pio = BUTTON_PIO,
+        .active_high = false,
+    };
+
+    led_tape_off();
+    radio_power_down();
+    // motor_power_down();
+    pio_output_high(LED_STATUS_PIO);
+    pio_output_high(LED_ERROR_PIO);
+
+    delay_ms(3000);
+
+    mcu_sleep_wakeup_set(&sleep_wakeup_cfg);
+    mcu_sleep(&sleep_cfg);
+}
+
+
 
 void ramp_duty_cycle(int *current_left_duty, int target_left_duty, int *current_right_duty, int target_right_duty) {
     while (*current_left_duty != target_left_duty || *current_right_duty != target_right_duty) {
@@ -104,6 +127,8 @@ int main (void)
 
     pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
     pio_config_set (LED_ERROR_PIO, PIO_OUTPUT_HIGH);
+
+    pio_config_set(BUTTON_PIO, PIO_PULLUP);
     
 
     int i = 0;
@@ -135,6 +160,7 @@ int main (void)
     int parity;
     uint8_t hit_signal;
     uint32_t tick_battery = 0;
+    uint32_t tick_sleep = 0;
     bool hit_detect = false;
     // uint32_t tick_tx = 0;
     // uint32_t tick_rx = 0;
@@ -145,6 +171,7 @@ int main (void)
     {   
         pacer_wait();
         tick_battery++;
+        tick_sleep++;
 
         // delay_ms(DELAY_MS);
 
@@ -197,6 +224,13 @@ int main (void)
                 pio_output_high(LED_ERROR_PIO);
             }
             tick_battery=0;
+        }
+
+        if (tick_sleep > (PACER_RATE/SLEEP_CHECK_RATE)) {
+            if (pio_input_get(BUTTON_PIO) == 0) {
+                sleepify();
+            }
+            tick_sleep = 0;
         }
     }
 }

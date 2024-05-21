@@ -24,4 +24,8 @@ bool radio_listen(void);
 
 bool radio_rx_data_ready(void);
 
+bool radio_power_down(void);
+
+bool radio_power_up(void);
+
 #endif

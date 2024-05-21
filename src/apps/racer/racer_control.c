@@ -14,6 +14,7 @@
 #include "pacer.h"
 #include "led_tape.h"
 #include "battery.h"
+#include "mcu_sleep.h"
 
 #include "radio.h"
 #include "motor_control.h"
@@ -26,6 +27,7 @@
 #define RX_RATE 50
 #define TX_RATE 10
 #define BATTERY_RATE 1
+#define SLEEP_CHECK_RATE 1
 
 #define RAMP_STEP 1
 #define RAMP_DELAY 10
@@ -72,6 +74,8 @@ bool button_press = false;
 //     set_duty(target_left_duty, target_right_duty);
 // }
 
+
+
 /***
  * adapts h bridge main to include init radio and ready to recieve radio
  * unsure if radio_rx needs to be in the while loop or seperate
@@ -81,6 +85,26 @@ bool button_press = false;
  * * could set up bumper as an interrupt??
  * if it shits itself, could be bc of attempting serial and radio???
  ***/
+
+void sleepify(void) {
+    mcu_sleep_cfg_t sleep_cfg = {.mode=MCU_SLEEP_MODE_BACKUP};
+    mcu_sleep_wakeup_cfg_t sleep_wakeup_cfg = {
+        .pio = BUTTON_PIO,
+        .active_high = false,
+    };
+
+    led_tape_off();
+    radio_power_down();
+    // motor_power_down();
+    pio_output_high(LED_STATUS_PIO);
+    pio_output_high(LED_ERROR_PIO);
+
+    delay_ms(3000);
+
+    mcu_sleep_wakeup_set(&sleep_wakeup_cfg);
+    mcu_sleep(&sleep_cfg);
+}
+
 
 int main (void)
 {
@@ -122,6 +146,7 @@ int main (void)
     uint32_t tick_tx = 0;
     uint32_t tick_rx = 0;
     uint32_t tick_battery = 0;
+    uint32_t tick_sleep = 0;
     char radio_message[33];
     bool listening = true;
     bool hit_detect = true;
@@ -133,6 +158,7 @@ int main (void)
         tick_rx++;
         tick_tx++;
         tick_battery++;
+        tick_sleep++;
 
         // set_duty(0, 0);
         hit_detect = pio_input_get(BUMP_DETECT);
@@ -142,7 +168,6 @@ int main (void)
             // pio_output_set(TX_LED, 0); // tells its in tranmitting mode
             // pio_output_set (RX_LED, 1);
             int tx_status;
-
             tx_status = radio_tx(hit_detect_flag);
             // pio_output_set(TX_LED, 1);
 
@@ -215,6 +240,13 @@ int main (void)
                 pio_output_high(LED_ERROR_PIO);
             }
             tick_battery=0;
+        }
+
+        if (tick_sleep > (PACER_RATE/SLEEP_CHECK_RATE)) {
+            if (pio_input_get(BUTTON_PIO) == 0) {
+                sleepify();
+            }
+            tick_sleep = 0;
         }
         
     }
