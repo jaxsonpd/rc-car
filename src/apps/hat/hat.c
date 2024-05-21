@@ -42,24 +42,24 @@
 
 // Game constants
 #define STOP_TIME 5 //< The stop time in seconds
-#define BATTERY_DROP_LIMIT 3 //< The number of times a battery drop is detected
+#define BATTERY_DROP_LIMIT 0 //< The number of times a battery drop is detected
 
 // Pacer Constants in Hz
 #define PACER_RATE 100
 #define CONTROL_UPDATE_RATE 5
 #define RADIO_SEND_RATE 30
 #define RADIO_RECEIVE_RATE 50
-#define BUZZER_UPDATE_RATE 3
+#define BUZZER_UPDATE_RATE 4
 #define LED_UPDATE_RATE 2
 #define BATTERY_CHECK_RATE 1
-#define SLEEP_CHECK_RATE 1
+#define SLEEP_CHECK_RATE 2
 
 // Enables
 bool g_radio_en = true;
 bool g_control_en = true;
-bool g_buzzer_en = false;
+bool g_buzzer_en = true;
 bool g_led_en = true;
-bool g_battery_check_en = false;
+bool g_battery_check_en = true;
 bool g_sleep_en = true;
 
 control_data_t g_control_data; 
@@ -68,12 +68,6 @@ radio_packet_t g_radio_packet;
 // Bumper control
 bool g_bumper_hit = false;
 bool g_stopped = false;
-
-mcu_sleep_cfg_t sleep_cfg = {.mode=MCU_SLEEP_MODE_BACKUP};
-mcu_sleep_wakeup_cfg_t sleep_wakeup_cfg = {
-    .pio = BUTTON_PIO,
-    .active_high = false,
-};
 
 /** 
  * @brief Handle the radio tx functionality
@@ -120,7 +114,7 @@ void setup (void) {
         radio_power_down();
     }
 
-    if (control_init(ADXL345_ADDRESS, true)) {
+    if (control_init(ADXL345_ADDRESS, false)) {
         panic (LED_ERROR_PIO, 12);
     }
 
@@ -147,6 +141,12 @@ void setup (void) {
 
 
 void sleepify(void) {
+    mcu_sleep_cfg_t sleep_cfg = {.mode=MCU_SLEEP_MODE_BACKUP};
+    mcu_sleep_wakeup_cfg_t sleep_wakeup_cfg = {
+        .pio = BUTTON_PIO,
+        .active_high = false,
+    };
+
     led_tape_off();
     radio_power_down();
     buzzer_off();
@@ -224,8 +224,10 @@ int main (void) {
                     printf("                             Rx: %d\n", result);   
                 } 
                 
-                if (result == 0) {
+                if (result == 0 && !g_stopped) {
                     g_bumper_hit = true;
+                } else {
+                    g_bumper_hit = false;
                 }
             }
 
@@ -234,7 +236,7 @@ int main (void) {
 
         // Buzzer sound update
         if (g_buzzer_en && (ticks_buzzer > (PACER_RATE / BUZZER_UPDATE_RATE))) {
-            buzzer_update();
+            buzzer_update(g_stopped);
             ticks_buzzer = 0;
         }
 
@@ -247,7 +249,7 @@ int main (void) {
         // Battery voltage switch
         if (g_battery_check_en 
             && (ticks_battery > (PACER_RATE / BATTERY_CHECK_RATE))) {
-            if (battery_millivolts() < 5000) {
+            if (battery_millivolts() < 2553) {
                 battery_drop_num++;
             } else {
                 battery_drop_num = 0;

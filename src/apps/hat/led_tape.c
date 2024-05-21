@@ -30,9 +30,9 @@ void led_tape_update(bool stopped) {
         for (i = 0; i < NUM_LEDS; i++)
         {
             // Set full green  GRB order
-            leds[i * 3] = 255*state;
-            leds[i * 3 + 1] = 0;
-            leds[i * 3 + 2] = 255*!state;
+            leds[i * 3] = (143*state + 100*!state)/3;
+            leds[i * 3 + 1] = (0*state + 0*!state)/3;
+            leds[i * 3 + 2] = (30*state + 40*!state)/3;
         }
 
         ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS * 3);
@@ -45,7 +45,7 @@ void led_tape_update(bool stopped) {
         {
             // Set full green  GRB order
             leds[i * 3] = 0;
-            leds[i * 3 + 1] = 255*state;
+            leds[i * 3 + 1] = 255*state/3;
             leds[i * 3 + 2] = 0;
         }
 

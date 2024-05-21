@@ -24,8 +24,9 @@ int8_t buzzer_init(void);
  * @brief Update the buzzer for use in the paced loop expects to be 
  * updated at 1 Hz
  * 
+ * @param stopped true if the car is stopped
  */
-void buzzer_update(void);
+void buzzer_update(bool stopped);
 
 /** 
  * @brief Shutdown the buzzers pwm has to be re initalised

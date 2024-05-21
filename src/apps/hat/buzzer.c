@@ -20,9 +20,11 @@
 #define MIN_FREQ 2
 #define FREQ_STEP 25
 
-uint32_t tune_length = 51; 
-char g_tune_test[] = "FDGGXXFDGGXXDFDFXGFDEdEXXFDGGXGbAXDFDFXGFXDEXAGGXXX";
-// char g_tune_test[] = "DDDAAaGGFFDFGCC";
+uint32_t main_tune_length = 51; 
+char g_tune_main[] = "FDGGXXFDGGXXDFDFXGFDEdEXXFDGGXGbAXDFDFXGFXDEXAGGXXX";
+uint32_t stopped_tune_length = 12;
+char g_tune_stopped[] = "DAXXDAXXDAXX";
+// char g_tune_main[] = "DDDAAaGGFFDFGCC";
 
 static const pwm_cfg_t g_buzzer_pwm_cfg = 
 {
@@ -105,17 +107,32 @@ static uint32_t note_to_freq(char note) {
 }
 
 
-void buzzer_update(void) {
+void buzzer_update(bool stopped) {
 
     static uint32_t note_count = 0;
     static bool prev_zero = false;
+    static bool not_stopped = true;
+
+    if (stopped && not_stopped) {
+        not_stopped = false;
+        note_count = 0;
+    } else if (!stopped) {
+        not_stopped = true;
+    }
 
     note_count ++;
-    if (note_count > tune_length) {
+    if (stopped && (note_count > stopped_tune_length)) {
+        note_count = 0;
+    } else if (note_count > main_tune_length) {
         note_count = 0;
     }
 
-    char note = g_tune_test[note_count];
+    char note = 'A';
+    if (!stopped) {
+        note = g_tune_main[note_count];
+    } else {
+        note = g_tune_stopped[note_count];
+    }
 
     if (note == 'X') {
         pwm_duty_set(g_buzzer_pwm, PWM_DUTY_DIVISOR(262, 0));
