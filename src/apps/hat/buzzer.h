@@ -27,5 +27,11 @@ int8_t buzzer_init(void);
  */
 void buzzer_update(void);
 
+/** 
+ * @brief Shutdown the buzzers pwm has to be re initalised
+ * 
+ */
+void buzzer_off(void);
+
 
 #endif // BUZZER_H

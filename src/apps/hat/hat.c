@@ -37,23 +37,30 @@
 #include "target.h"
 #include "buzzer.h"
 #include "led_tape.h"
+#include "battery.h"
+#include "mcu_sleep.h"
 
 // Game constants
-#define STOP_TIME 3 //< The stop time in seconds
+#define STOP_TIME 5 //< The stop time in seconds
+#define BATTERY_DROP_LIMIT 3 //< The number of times a battery drop is detected
 
 // Pacer Constants in Hz
 #define PACER_RATE 100
 #define CONTROL_UPDATE_RATE 5
-#define RADIO_SEND_RATE 20
+#define RADIO_SEND_RATE 30
 #define RADIO_RECEIVE_RATE 50
 #define BUZZER_UPDATE_RATE 3
 #define LED_UPDATE_RATE 2
+#define BATTERY_CHECK_RATE 1
+#define SLEEP_CHECK_RATE 1
 
 // Enables
 bool g_radio_en = true;
 bool g_control_en = true;
 bool g_buzzer_en = false;
 bool g_led_en = true;
+bool g_battery_check_en = false;
+bool g_sleep_en = true;
 
 control_data_t g_control_data; 
 radio_packet_t g_radio_packet;
@@ -61,6 +68,12 @@ radio_packet_t g_radio_packet;
 // Bumper control
 bool g_bumper_hit = false;
 bool g_stopped = false;
+
+mcu_sleep_cfg_t sleep_cfg = {.mode=MCU_SLEEP_MODE_BACKUP};
+mcu_sleep_wakeup_cfg_t sleep_wakeup_cfg = {
+    .pio = BUTTON_PIO,
+    .active_high = false,
+};
 
 /** 
  * @brief Handle the radio tx functionality
@@ -96,6 +109,8 @@ void setup (void) {
     pio_config_set(RADIO_POWER_ENABLE_PIO, PIO_OUTPUT_HIGH);
 
     pio_output_set(LED_STATUS_PIO, LED_ACTIVE);
+    
+    pio_config_set(BUTTON_PIO, PIO_PULLUP);
 
     if (radio_init()) {
         panic (LED_ERROR_PIO, 4);
@@ -103,11 +118,10 @@ void setup (void) {
 
     if (!g_radio_en) {
         radio_power_down();
-        pio_output_set(RADIO_POWER_ENABLE_PIO, 0);
     }
 
     if (control_init(ADXL345_ADDRESS, true)) {
-        panic (LED_ERROR_PIO, 2);
+        panic (LED_ERROR_PIO, 12);
     }
 
     if (buzzer_init()) {
@@ -115,12 +129,34 @@ void setup (void) {
     }
 
     if (!g_buzzer_en) {
-        pio_config_set(BUZZER_PIO, PIO_OUTPUT_LOW);
+       buzzer_off();
     } 
 
     if (led_tape_init()) {
         panic (LED_ERROR_PIO, 8);
     }
+
+    if (!g_led_en) {
+        led_tape_off();
+    }
+
+    if (battery_sensor_init()) {
+        panic (LED_ERROR_PIO, 10);
+    }
+}
+
+
+void sleepify(void) {
+    led_tape_off();
+    radio_power_down();
+    buzzer_off();
+    pio_output_high(LED_STATUS_PIO);
+    pio_output_high(LED_ERROR_PIO);
+
+    delay_ms(3000);
+
+    mcu_sleep_wakeup_set(&sleep_wakeup_cfg);
+    mcu_sleep(&sleep_cfg);
 }
 
 
@@ -130,8 +166,12 @@ int main (void) {
     uint32_t ticks_rx = 0;
     uint32_t ticks_buzzer = 0;
     uint32_t ticks_led = 0;
+    uint32_t ticks_battery = 0;
+    uint32_t ticks_sleep = 0;
 
     uint32_t ticks_stopped = 0;
+
+    uint32_t battery_drop_num = 0;
 
     setup();
 
@@ -145,6 +185,8 @@ int main (void) {
         ticks_buzzer++;
         ticks_led++;
         ticks_stopped++;
+        ticks_battery++;
+        ticks_sleep++;
 
         // Stopped from bumper control
         if (g_bumper_hit && !g_stopped 
@@ -182,7 +224,7 @@ int main (void) {
                     printf("                             Rx: %d\n", result);   
                 } 
                 
-                if (result == 1) {
+                if (result == 0) {
                     g_bumper_hit = true;
                 }
             }
@@ -201,5 +243,33 @@ int main (void) {
             led_tape_update(g_stopped);
             ticks_led = 0;
         }   
+
+        // Battery voltage switch
+        if (g_battery_check_en 
+            && (ticks_battery > (PACER_RATE / BATTERY_CHECK_RATE))) {
+            if (battery_millivolts() < 5000) {
+                battery_drop_num++;
+            } else {
+                battery_drop_num = 0;
+            }
+
+            if (battery_drop_num > BATTERY_DROP_LIMIT) {
+                radio_power_down();
+                led_tape_off();
+                buzzer_off();
+                panic(LED_ERROR_PIO, 2);   
+            }
+
+            ticks_battery = 0;
+        }
+
+        // Sleep checking
+        if (g_sleep_en && ticks_sleep > (PACER_RATE/SLEEP_CHECK_RATE)) {
+            
+            if (pio_input_get(BUTTON_PIO) == 0) {
+                sleepify();
+            }
+            ticks_sleep = 0;
+        }
     }
 }

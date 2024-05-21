@@ -61,40 +61,40 @@ static uint32_t note_to_freq(char note) {
     uint32_t freq = 262;
     switch (note) {
         case 'a':
-            freq = 208;
+            freq = 415;
             break;
         case 'A':
-            freq = 220;
+            freq = 440;
             break;
         case 'b':
-            freq = 233;
+            freq = 466;
             break;
         case 'B':
-            freq = 123;
+            freq = 494;
             break;
         case 'C':
-            freq = 262;
+            freq = 523;
             break;
         case 'd':
-            freq = 277;
+            freq = 554;
             break;
         case 'D':
-            freq = 294;
+            freq = 587;
             break;
         case 'e':
-            freq = 311;
+            freq = 622;
             break;
         case 'E':
-            freq = 330;
+            freq = 659;
             break;
         case 'F':
-            freq = 349;
+            freq = 698;
             break;
         case 'g':
-            freq = 370;
+            freq = 740;
             break;
         case 'G':
-            freq = 392;
+            freq = 783;
             break;
         default:
             freq = prev_freq;
@@ -122,7 +122,7 @@ void buzzer_update(void) {
         prev_zero = true;
     } else {
         if (prev_zero) {
-            pwm_duty_set(g_buzzer_pwm, PWM_DUTY_DIVISOR(262, 50));
+            pwm_duty_set(g_buzzer_pwm, PWM_DUTY_DIVISOR(262, 90));
             prev_zero = false;
         }
 
@@ -133,3 +133,6 @@ void buzzer_update(void) {
     printf("Set: %c\n", note);
 }
 
+void buzzer_off(void) {
+    pwm_stop(g_buzzer_pwm);
+}

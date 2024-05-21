@@ -72,7 +72,7 @@ int8_t radio_init (void) {
             break;
     }
 
-    nrf24_cfg.channel = 2;
+    nrf24_cfg.channel = 4;
 
     g_nrf = nrf24_init(&nrf24_cfg);
 
@@ -119,10 +119,13 @@ bool radio_rx_data_ready(void) {
 }
 
 bool radio_power_down(void) {
-    return ! nrf24_power_down(g_nrf);
+    bool result = nrf24_power_down(g_nrf);
+    pio_output_low(RADIO_POWER_ENABLE_PIO);
+    return !result;
 }
 
 bool radio_power_up(void) {
+    pio_output_high(RADIO_POWER_ENABLE_PIO);
     return nrf24_power_up(g_nrf);
 }
 
