@@ -12,6 +12,8 @@
 #include "delay.h"
 #include "panic.h"
 #include "pacer.h"
+#include "led_tape.h"
+#include "battery.h"
 
 #include "radio.h"
 #include "motor_control.h"
@@ -83,6 +85,8 @@ int main (void)
 {
     // init pwm //
     motor_init();
+    
+    battery_sensor_init();
 
     bool asked = false;
 
@@ -115,6 +119,8 @@ int main (void)
     uint32_t tick_rx = 0;
     char radio_message[33];
     bool listening = true;
+    bool hit_detect = true;
+    bool hit_detect_flag = true;
 
     while (1)
     {   
@@ -123,18 +129,22 @@ int main (void)
         tick_tx++;
 
         // set_duty(0, 0);
-        
+        hit_detect = pio_input_get(BUMP_DETECT);
+        if (!hit_detect) hit_detect_flag = false;
+
+        printf("BATTERY: %d\n", battery_millivolts());
 
         if(tick_tx > (PACER_RATE/TX_RATE)) {
             pio_output_set(TX_LED, 0); // tells its in tranmitting mode
             pio_output_set (RX_LED, 1);
             int tx_status;
 
-            //check for button press
-            bool hit_detect = pio_input_get (BUMP_DETECT);
-
-            tx_status = radio_tx(hit_detect);
+            tx_status = radio_tx(hit_detect_flag);
             pio_output_set(TX_LED, 1);
+
+            if (tx_status == 32) {
+                hit_detect_flag = true;
+            }
             
             radio_listen();
             tick_tx = 0;
@@ -182,6 +192,15 @@ int main (void)
             // printf ("listening\n");
         }
 
+        led_tape_driving();
+
+        if (battery_millivolts() < 2553)
+        {
+            printf("LOW BATTERY\n");
+            low_battery();
+        }  else {
+            pio_output_toggle(LED_STATUS_PIO);
+        }
         
     }
 }

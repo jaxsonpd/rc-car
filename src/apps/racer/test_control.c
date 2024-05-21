@@ -171,7 +171,7 @@ int main (void)
         }
 
 
-        void led_tape_driving(void);     
+        led_tape_driving();     
 
         // while (battery_millivolts () < 5000)
         // {

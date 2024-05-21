@@ -117,15 +117,15 @@ int radio_tx(uint8_t hit_signal)
     // transmits 'hit' signal
     snprintf (buffer, sizeof (buffer), "%d", hit_signal); 
     // printf("Tx: %s\n", buffer); // used for serial check
-    if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE)){
-        printf("                 RX: %d\n", hit_signal);
-        return 1;
-    } else {
-        // printf ("TX: Failure\n");
-        return 0;
-    }
+    // if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE)){
+    //     printf("                 RX: %d\n", hit_signal);
+    //     return ;
+    // } else {
+    //     // printf ("TX: Failure\n");
+    //     return 0;
+    // }
     // delay_ms(500);
-
+    return nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE);
 }
 
 bool radio_listen(void){

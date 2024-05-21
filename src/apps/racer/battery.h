@@ -20,7 +20,7 @@
 #define BATTERY_VOLTAGE_ADC ADC_CHANNEL_6
 #define LED_ERROR PA0_PIO // red error LED
 
-static int battery_sensor_init (void);
+int battery_sensor_init (void);
 
 uint16_t battery_millivolts (void);
 
