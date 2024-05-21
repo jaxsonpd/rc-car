@@ -86,6 +86,7 @@ int main (void)
 {
     // init pwm //
     motor_init();
+    led_tape_driving();
     
     battery_sensor_init();
 
@@ -137,8 +138,6 @@ int main (void)
         hit_detect = pio_input_get(BUMP_DETECT);
         if (!hit_detect) hit_detect_flag = false;
 
-        printf("BATTERY: %d\n", battery_millivolts());
-
         if(tick_tx > (PACER_RATE/TX_RATE)) {
             // pio_output_set(TX_LED, 0); // tells its in tranmitting mode
             // pio_output_set (RX_LED, 1);
@@ -157,7 +156,6 @@ int main (void)
 
         if (tick_rx > (PACER_RATE/RX_RATE)) {
             if (radio_rx_data_ready()) {
-                printf("Listening\n");
                 // pio_output_set (RX_LED, 0);
                 // pio_output_set(TX_LED, 1);
 
@@ -189,17 +187,22 @@ int main (void)
                 } else if (right_motor_duty<=5 && right_motor_duty>=-5) {
                     right_motor_duty = 0;
                 }
+
+                if (left_motor_duty == 0 && right_motor_duty == 0) {
+                    led_tape_bump();
+                } else {
+                    led_tape_driving();
+                }
                 // ramp_duty_cycle(&prev_left_duty, left_motor_duty, &prev_right_duty, right_motor_duty);
                 // prev_right_duty=right_motor_duty;
                 // prev_left_duty=left_motor_duty;
                 set_duty(left_motor_duty, right_motor_duty);
+
             }
             tick_rx = 0;
             // printf ("listening\n");
         }
-
-        led_tape_driving();
-
+        
         //Check Battery Value
         if (tick_battery>(PACER_RATE/BATTERY_RATE)) {
             if (battery_millivolts() < 2553)

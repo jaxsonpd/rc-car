@@ -28,6 +28,7 @@
 #define NUM_LEDS 20
 
 #define BATTERY_RATE 1
+#define BUMP_OFF_RATE 500
 
 #define RAMP_STEP 1
 #define RAMP_DELAY 10
@@ -95,6 +96,7 @@ int main (void)
 {
     // init pwm //
     motor_init();
+    led_tape_driving();
 
     battery_sensor_init();
 
@@ -166,6 +168,13 @@ int main (void)
                 } else if (right_motor_duty <= -80) {
                     right_motor_duty = -80;
                 }
+
+                if (left_motor_duty == 0 && right_motor_duty == 0) {
+                    led_tape_bump();
+                } else {
+                    led_tape_driving();
+                }
+
                 ramp_duty_cycle(&prev_left_duty, left_motor_duty, &prev_right_duty, right_motor_duty);
                 prev_right_duty=right_motor_duty;
                 prev_left_duty=left_motor_duty;
@@ -175,16 +184,13 @@ int main (void)
 
         if(!pio_input_get (BUMP_DETECT)) {
             bump_detect(prev_left_duty, prev_right_duty);
-        }
-
-
-        led_tape_driving();     
+        }   
 
         //Check Battery Value
         if (tick_battery>(PACER_RATE/BATTERY_RATE)) {
             if (battery_millivolts() < 2553)
             {
-                pio_output_low(LED_ERROR_PIO);
+                pio_output_toggle(LED_ERROR_PIO);
                 pio_output_high(LED_STATUS_PIO);
             }  else {
                 pio_output_low(LED_STATUS_PIO);

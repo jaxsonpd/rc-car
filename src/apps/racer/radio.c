@@ -84,11 +84,13 @@ void radio_init(void)
             break;
     }
 
+    radio_channel_number = nrf24_cfg.channel;
+
     nrf = nrf24_init (&nrf24_cfg);
     // if (! nrf)
     //     panic (LED_ERROR_PIO, 2);
 
-    radio_channel_number = nrf24_cfg.channel;
+    
     radio_channel_number_get();
 
 }

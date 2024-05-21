@@ -39,7 +39,7 @@ void led_tape_bump(void) {
     {
         // Set full green  GRB order
         leds[i * 3] = 0;
-        leds[i * 3 + 1] = 255*state;
+        leds[i * 3 + 1] = 150;
         leds[i * 3 + 2] = 0;
     }
 
