@@ -59,7 +59,7 @@ bool g_radio_en = true;
 bool g_control_en = true;
 bool g_buzzer_en = true;
 bool g_led_en = true;
-bool g_battery_check_en = true;
+bool g_battery_check_en = false;
 bool g_sleep_en = true;
 
 control_data_t g_control_data; 

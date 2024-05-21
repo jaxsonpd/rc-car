@@ -22,9 +22,9 @@ void led_tape_driving(void) {
     for (i = 0; i < NUM_LEDS; i++)
     {
         // Set full green  GRB order
-        leds[i * 3] = 195;      //G
-        leds[i * 3 + 1] = 168;    //R
-        leds[i * 3 + 2] = 240;    //B
+        leds[i * 3] = 50/3;      //G
+        leds[i * 3 + 1] = 40/3;    //R
+        leds[i * 3 + 2] = 255/2;    //B
     }
     ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS * 3);
 }
@@ -62,13 +62,4 @@ void led_tape_off(void) {
         }
 
         ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS * 3);
-}
-
-void main (void)
-{
-    while (1)
-    {
-        led_tape_driving();
-    }
-    
 }

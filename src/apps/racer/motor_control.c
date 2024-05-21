@@ -24,7 +24,7 @@
 #define PWM3_PIO PB1_PIO //AIN2
 #define PWM4_PIO PB0_PIO //BIN2
 
-#define PWM_FREQ_HZ 2000
+#define PWM_FREQ_HZ 500
 #define START_DUTY_CYCLE 0
 
 #define N_FAULT PA28_PIO // nFault pin
@@ -128,6 +128,12 @@ void set_duty(int duty_cycle_left,int duty_cycle_right)
     int duty_cycle_right_backwards = 0;
     int duty_cycle_left_forwards = 0;
     int duty_cycle_left_backwards = 0;
+
+    if (duty_cycle_left>= 100) duty_cycle_left = 98;
+    if (duty_cycle_right>= 100) duty_cycle_right = 98;
+    if (duty_cycle_left<= -100) duty_cycle_left = -98;
+    if (duty_cycle_right<= -100) duty_cycle_right = -98;
+
     if (duty_cycle_right > 0) {
         duty_cycle_right_forwards = duty_cycle_right;
         duty_cycle_right_backwards = 0;

@@ -15,7 +15,7 @@
 #include "delay.h"
 #include "panic.h"
 #include "pacer.h"
-#include "ledtape.h"
+#include "led_tape.h"
 #include "adc.h"
 #include "battery.h"
 
@@ -27,7 +27,7 @@
 #define DELAY_MS 10
 #define NUM_LEDS 20
 
-#define RAMP_STEP 1 
+#define RAMP_STEP 1
 #define RAMP_DELAY 10
 
 #define PACER_RATE 50
@@ -150,14 +150,14 @@ int main (void)
                 printf("Left Motor: %d Right Motor %d\n", left_motor_duty, right_motor_duty);
                 printf("Channel: %d\n", radio_channel_number_get());
                 if (left_motor_duty >= 80) {
-                    left_motor_duty = 10;
+                    left_motor_duty = 80;
                 } else if (left_motor_duty <= -80) {
-                    left_motor_duty = -10;
+                    left_motor_duty = -80;
                 }
                 if (right_motor_duty >= 80) {
-                    right_motor_duty = 10;
+                    right_motor_duty = 80;
                 } else if (right_motor_duty <= -80) {
-                    right_motor_duty = -10;
+                    right_motor_duty = -80;
                 }
                 ramp_duty_cycle(&prev_left_duty, left_motor_duty, &prev_right_duty, right_motor_duty);
                 prev_right_duty=right_motor_duty;
@@ -171,7 +171,7 @@ int main (void)
         }
 
 
-        // ledtape_write (LEDTAPE_PIO, leds, NUM_LEDS*3);      
+        void led_tape_driving(void);     
 
         // while (battery_millivolts () < 5000)
         // {
