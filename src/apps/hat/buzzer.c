@@ -21,9 +21,9 @@
 #define FREQ_STEP 25
 
 uint32_t main_tune_length = 51; 
-char g_tune_main[] = "FDGGXXFDGGXXDFDFXGFDEdEXXFDGGXGbAXDFDFXGFXDEXAGGXXX";
+char g_tune_main[] = "FDGGXXFDGGXXDFDFXGFDEdEXXFDGGXGbAXDFDF0GF0DE0AGGXXX";
 uint32_t stopped_tune_length = 12;
-char g_tune_stopped[] = "DAXXDAXXDAXX";
+char g_tune_stopped[] = "Da0XDa0XDa0X";
 // char g_tune_main[] = "DDDAAaGGFFDFGCC";
 
 static const pwm_cfg_t g_buzzer_pwm_cfg = 

@@ -59,7 +59,7 @@ bool g_radio_en = true;
 bool g_control_en = true;
 bool g_buzzer_en = true;
 bool g_led_en = true;
-bool g_battery_check_en = false;
+bool g_battery_check_en = true;
 bool g_sleep_en = true;
 
 control_data_t g_control_data; 
@@ -86,7 +86,7 @@ void radio_tx_handler(void) {
 
     g_radio_packet.left_duty = g_control_data.left_motor;
     g_radio_packet.right_duty = g_control_data.right_motor;
-    g_radio_packet.dastardly = 0;
+    g_radio_packet.dastardly = g_stopped;
     g_radio_packet.parity = 1;
 
     if (radio_tx(&g_radio_packet, true)) {
@@ -253,13 +253,15 @@ int main (void) {
                 battery_drop_num++;
             } else {
                 battery_drop_num = 0;
+                pio_output_high(LED_ERROR_PIO);
             }
 
             if (battery_drop_num > BATTERY_DROP_LIMIT) {
-                radio_power_down();
-                led_tape_off();
-                buzzer_off();
-                panic(LED_ERROR_PIO, 2);   
+                // radio_power_down();
+                // led_tape_off();
+                // buzzer_off();
+                // pio_output_high(LED_STATUS_PIO);
+                pio_output_toggle(LED_ERROR_PIO);   
             }
 
             ticks_battery = 0;
