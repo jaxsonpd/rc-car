@@ -121,6 +121,10 @@ void motor_init(void)
     pwm_duty_set(pwm4, PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0));
 }   
 
+void motor_power_down(void) 
+{
+    pio_config_set(N_SLEEP, PIO_OUTPUT_LOW);
+}
 
 void set_duty(int duty_cycle_left,int duty_cycle_right) 
 {

@@ -19,7 +19,7 @@
 
 static adc_t battery_sensor;
 
-static int battery_sensor_init (void)
+int battery_sensor_init (void)
 {
     adc_cfg_t bat =
         {
@@ -38,22 +38,20 @@ uint16_t battery_millivolts (void)
 {
     adc_sample_t s;
 
-    battery_sensor_init();
-
     adc_read (battery_sensor, &s, sizeof (s));
 
     // 68k pull down & 100k pull up gives a scale factor or
     // 68 / (100 + 68) = 0.4048
     // 4096 (max ADC reading) * 0.4048 ~= 1658
-    return (uint16_t) ((int)s) * 3300 / 1658;
+    return (uint16_t) ((int)s);
 }
 
-void low_battery(void) 
-{
-    while (battery_millivolts () < 5000)
-        {
-            pio_output_toggle (LED_ERROR);
-            delay_ms (200);
-        }
+// void low_battery(void) 
+// {
+//     while (battery_millivolts () < 2553)
+//         {
+//             pio_output_toggle (LED_ERROR);
+//             delay_ms (200);
+//         }
   
-}
+// }

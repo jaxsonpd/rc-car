@@ -64,10 +64,6 @@ void radio_init(void)
 
     // usb_serial_stdio_init ();
 
-    nrf = nrf24_init (&nrf24_cfg);
-    if (! nrf)
-        panic (LED_ERROR_PIO, 2);
-
 // compared to hat code, they include this to change the radio config via DIP switch
 
     uint8_t button_cfg = pio_input_get(RADIO_CONFIG_0) << 1 
@@ -89,6 +85,12 @@ void radio_init(void)
     }
 
     radio_channel_number = nrf24_cfg.channel;
+
+    nrf = nrf24_init (&nrf24_cfg);
+    // if (! nrf)
+    //     panic (LED_ERROR_PIO, 2);
+
+    
     radio_channel_number_get();
 
 }
@@ -117,15 +119,15 @@ int radio_tx(uint8_t hit_signal)
     // transmits 'hit' signal
     snprintf (buffer, sizeof (buffer), "%d", hit_signal); 
     // printf("Tx: %s\n", buffer); // used for serial check
-    if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE)){
-        printf("                 RX: %d\n", hit_signal);
-        return 1;
-    } else {
-        // printf ("TX: Failure\n");
-        return 0;
-    }
+    // if (! nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE)){
+    //     printf("                 RX: %d\n", hit_signal);
+    //     return ;
+    // } else {
+    //     // printf ("TX: Failure\n");
+    //     return 0;
+    // }
     // delay_ms(500);
-
+    return nrf24_write (nrf, buffer, RADIO_PAYLOAD_SIZE);
 }
 
 bool radio_listen(void){
@@ -134,4 +136,15 @@ bool radio_listen(void){
 
 bool radio_rx_data_ready(void){
     return nrf24_is_data_ready(nrf);
+}
+
+bool radio_power_down(void) {
+    bool result = nrf24_power_down(nrf);
+    pio_output_low(RADIO_POWER_ENABLE_PIO);
+    return !result;
+}
+
+bool radio_power_up(void) {
+    pio_output_high(RADIO_POWER_ENABLE_PIO);
+    return nrf24_power_up(nrf);
 }

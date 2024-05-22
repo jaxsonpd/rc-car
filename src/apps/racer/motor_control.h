@@ -10,6 +10,8 @@
 
 void motor_init(void);
 
+void motor_power_down(void) ;
+
 void set_duty(int duty_cycle_left,int duty_cycle_right);
 
 #endif

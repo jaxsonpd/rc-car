@@ -38,7 +38,7 @@
 #define SERVO_PWM_PIO PA2_PIO
 
 /* Button  */
-#define BUTTON_PIO PA16_PIO
+#define BUTTON_PIO PA2_PIO
 #define BUMP_DETECT PA27_PIO
 
 /* H-bridges   */
