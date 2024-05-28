@@ -12,6 +12,7 @@
         "nrf24.h": "c",
         "pio.h": "c",
         "adc.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "mcu_sleep.h": "c"
     }
 }

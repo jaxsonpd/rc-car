@@ -196,15 +196,15 @@ int main (void)
 
                 printf("Set: %3d,%3d,%2d,%1d\n", left_motor_duty, right_motor_duty, dastardly, parity);
 
-                if (left_motor_duty >= 50) {
-                    left_motor_duty = 50;
-                } else if (left_motor_duty <= -50) {
-                    left_motor_duty = -50;
+                if (left_motor_duty >= 80) {
+                    left_motor_duty = 80;
+                } else if (left_motor_duty <= -80) {
+                    left_motor_duty = -80;
                 }
-                if (right_motor_duty >= 50) {
-                    right_motor_duty = 50;
-                } else if (right_motor_duty <= -50) {
-                    right_motor_duty = -50;
+                if (right_motor_duty >= 80) {
+                    right_motor_duty = 80;
+                } else if (right_motor_duty <= -80) {
+                    right_motor_duty = -80;
                 }
 
                 if (left_motor_duty<=5 && left_motor_duty>=-5) {
@@ -213,7 +213,7 @@ int main (void)
                     right_motor_duty = 0;
                 }
 
-                if (left_motor_duty == 0 && right_motor_duty == 0) {
+                if (dastardly == 1) {
                     led_tape_bump();
                 } else {
                     led_tape_driving();
@@ -230,13 +230,13 @@ int main (void)
         
         //Check Battery Value
         if (tick_battery>(PACER_RATE/BATTERY_RATE)) {
-            if (battery_millivolts() < 2553)
+            if (battery_millivolts() < 2453)
             {
                 pio_output_toggle(LED_ERROR_PIO);
                 pio_output_high(LED_STATUS_PIO);
                 delay_ms(10);
             }  else {
-                pio_output_low(LED_STATUS_PIO);
+                pio_output_toggle(LED_STATUS_PIO);
                 pio_output_high(LED_ERROR_PIO);
             }
             tick_battery=0;

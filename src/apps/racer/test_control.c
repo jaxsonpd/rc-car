@@ -127,7 +127,7 @@ int main (void)
 
     pio_config_set (LED_STATUS_PIO, PIO_OUTPUT_HIGH);
     pio_config_set (LED_ERROR_PIO, PIO_OUTPUT_HIGH);
-
+    // pio_config_set (LED_ERROR_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(BUTTON_PIO, PIO_PULLUP);
     
 
@@ -162,6 +162,7 @@ int main (void)
     uint32_t tick_battery = 0;
     uint32_t tick_sleep = 0;
     bool hit_detect = false;
+    bool dastardly_flag = true;
     // uint32_t tick_tx = 0;
     // uint32_t tick_rx = 0;
     char radio_message[33];
@@ -232,5 +233,9 @@ int main (void)
             }
             tick_sleep = 0;
         }
+
+        // if (dastardly_flag) {
+        //     pio_output_toggle(ACTUATOR1);
+        // }
     }
 }
