@@ -18,6 +18,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+
 #include "adxl345.h"
 
 #include "circular_buffer.h"
@@ -27,21 +28,21 @@
 #define BUFFER_SIZE 8
 
 /// The steering angles divisor to go from accelerometer value to duty cycle
-#define STEERING_DIVISOR 2 
-#define STEERING_MAX 100
-#define STEERING_MIN -100
+#define STEERING_DIVISOR 7 // value*2/divisor
+#define STEERING_MAX 60
+#define STEERING_MIN -60
 
 /// The throttle divisor to go from accelerometer value to duty cycle
-#define THROTTLE_DIVISOR 2
-#define THROTTLE_MAX 100
-#define THROTTLE_MIN -100
+#define THROTTLE_DIVISOR 4 // value*2/divisor
+#define THROTTLE_MAX 80
+#define THROTTLE_MIN -80
 
 /// The maximums for duty cycle for the left and right motor
-#define LEFT_MOTOR_MAX 70
-#define LEFT_MOTOR_MIN -70
+#define LEFT_MOTOR_MAX 80
+#define LEFT_MOTOR_MIN -80
 
-#define RIGHT_MOTOR_MAX 70
-#define RIGHT_MOTOR_MIN -70
+#define RIGHT_MOTOR_MAX 80
+#define RIGHT_MOTOR_MIN -80
 
 
 static twi_t adxl345_twi;
@@ -111,7 +112,7 @@ int8_t control_update (void) {
  * @return the duty cycle from -100 to 100
  */
 static int8_t calc_steering(int16_t raw_x) {
-    int16_t r_control_value =  raw_x / STEERING_DIVISOR;
+    int16_t r_control_value =  raw_x*2 / STEERING_DIVISOR;
 
     if (r_control_value >= 0 && r_control_value > STEERING_MAX) {
         r_control_value = STEERING_MAX;
@@ -129,7 +130,7 @@ static int8_t calc_steering(int16_t raw_x) {
  * @return the duty cycle from THROTTLE_MAX to THROTTLE_MIN
  */
 static int8_t calc_throttle(int16_t raw_y) {
-    int16_t r_control_value =  raw_y / THROTTLE_DIVISOR;
+    int16_t r_control_value =  raw_y*2 / THROTTLE_DIVISOR;
 
     if (r_control_value >= 0 && r_control_value > THROTTLE_MAX) {
         r_control_value = THROTTLE_MAX;
@@ -166,6 +167,7 @@ int8_t control_get_data (control_data_t *control_data) {
     // Calculate the tank tracks
     int8_t steering = calc_steering(control_data->raw_x);
     int8_t throttle = calc_throttle(control_data->raw_y);
+
     int16_t left_motor = throttle + steering;
     int16_t right_motor = throttle - steering;
 

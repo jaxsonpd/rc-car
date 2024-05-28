@@ -57,7 +57,7 @@
 // Enables
 bool g_radio_en = true;
 bool g_control_en = true;
-bool g_buzzer_en = true;
+bool g_buzzer_en = false;
 bool g_led_en = true;
 bool g_battery_check_en = true;
 bool g_sleep_en = true;
@@ -89,7 +89,7 @@ void radio_tx_handler(void) {
     g_radio_packet.dastardly = g_stopped;
     g_radio_packet.parity = 1;
 
-    if (radio_tx(&g_radio_packet, true)) {
+    if (radio_tx(&g_radio_packet, false)) {
         // printf ("Tx Error\n");
     }
 }
