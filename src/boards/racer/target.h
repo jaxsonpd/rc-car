@@ -62,5 +62,6 @@
 #define HBRIDGE_A2 = PB1_PIO   // HIGH = Backwards
 #define HBRIDGE_B2 = PB0_PIO   // HIGH = Backwards
 
+#define ACTUATOR1 PA14_PIO
 
 #endif /* TARGET_H  */

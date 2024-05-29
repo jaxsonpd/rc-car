@@ -71,16 +71,16 @@ void radio_init(void)
 
     switch (button_cfg) {
         case 0:
-            nrf24_cfg.channel = 1;
+            nrf24_cfg.channel = 33;
             break;
         case 1:
-            nrf24_cfg.channel = 2;
+            nrf24_cfg.channel = 45;
             break;
         case 2:
-            nrf24_cfg.channel = 3;
+            nrf24_cfg.channel = 59;
             break;
         case 3:
-            nrf24_cfg.channel = 4;
+            nrf24_cfg.channel = 43;
             break;
     }
 
