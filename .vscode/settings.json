@@ -14,5 +14,8 @@
         "adc.h": "c",
         "stdbool.h": "c",
         "mcu_sleep.h": "c"
-    }
+    },
+    "cSpell.words": [
+        "nessasary"
+    ]
 }

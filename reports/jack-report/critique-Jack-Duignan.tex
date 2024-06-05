@@ -26,51 +26,30 @@
 
 \section{Strengths}
 
-\comment{In this section describe what you think are the strengths of
-  your design, PCB layout, and overall wacky racer are.}
-
-The group 33 wacky hat had three main strengths. First the design of the PCB was very clean with a large number of testpoints and no components on the back. This allowed for quick assembly and easy debugging as the traces visable. Second, the board had the ability to be powered from both battery and USB. This was achived using a header which could be bridged to bypass the H-bridge and supply VBUS directly to the 5V plane. This was extremly useful allowing for testing of the radio without a battery. Third, the software was modularesed and well documented allowing both the hat and car to work on each others problems without explination needed. This simplified debugging.
+The group 33 wacky hat had three main strengths. First the design of the PCB was very clean with a large number of test-points and no components on the back. This allowed for quick assembly and easy debugging. Second, the board had the ability to be powered from both battery and USB. This was achieved using a header which could be bridged to bypass the H-bridge and supply VBUS directly to the 5V plane. This was extremely useful allowing for testing of the radio without a battery. Third, the software was modularised and well documented allowing both the members of the hat and the car to work on each others problems without much verbal explanation needed.
 
 \section{Weaknesses}
 
-\comment{In this section describe what you think are the weaknesses of
-  your design, PCB layout, and overall wacky racer are.}
-
-The wacky hat had three weaknesses. First the buzzer was powered off the 3V3 without a resister in parallel. This meant that the sound produced was quiet and in the end a resistor was soldered across the buzzer terminals. Second, the linear voltage regulators had there bypass pins pulled high which stopped this working luckly these could be pried up from the PCB and the fault was rectified without needing to replace any components. Third the control system spesifically the sensitivity of the y-axis (turning) was very high making the racer hard to control at slow speeds this was mitigated somewhat; however more needed to be done.
+The wacky hat had three weaknesses. First the buzzer was powered off the 3V3 without a resister in parallel. This meant that the sound produced was quiet making the song hard to hear. Second, the linear voltage regulators had there bypass pins pulled high which stopped them working correctly luckily these could be pried up from the PCB and the fault was rectified without needing to replace any components. Third the sensitivity of the control system, specifically of the y-axis (turning), was very high making the racer hard to control at slow speeds. This was fixed somewhat in the lead up to the race; however the control system value calculation should have been completely rewritten.
 
 \section{Improvements}
 
-\comment{In this section describe what you would like to have done
-  differently with the advantage of hind-sight.}
-
-The hat could be improved by: powering the buzzer off 5V with a resistor in series, leaving the 3V3 linear regulators bypass pins floating, and by implementing more gradual sensitivity on the y-axis. 
+The hat could be improved by: powering the buzzer off 5V with a resistor in series, leaving the 3V3 linear regulators bypass pins floating, and by implementing more gradual sensitivity on the y-axis. These improvements are small things that did not affect the core functionally of the system and where easily rectified. As a whole the system performed well without bugs.
 
 \section{Contribution}
 
-\comment{In this section describe what you perceive as your contribution
-  to the project compared to the other members of your team.}
-
-I had four main contributions to the project. First, I created the base sechematic used for both the wacky hat and racer which included the SAM4S and radio, GPIO and power supplies. Second, I completed around half of the PCB tracing and layout for the wacky hat. Third I wrote the majority of the software for the wacky hat including the main schedular, acceleromiter interfacing, and the buzzer code. Fourth I completed some debugging of the wacky racer including radio comunication and scheduling. 
+I had four main contributions to the project. First, I created the base schematic used for both the wacky hat and racer which included the SAM4S and radio, GPIO and power supplies. Second, I completed around half of the PCB tracing and layout for the wacky hat. Third I wrote the majority of the software for the wacky hat including the main scheduler, accelerometer interfacing, and the buzzer code. Fourth I completed some debugging of the wacky racer including radio communication and scheduling. I think my contribution was more than others in the team but this was a reflection of the greater amount of spare time that I had when the milestones were due.
 
 
 \section{Recommendations for future students}
 
-\comment{In this section describe recommendations (with reasons) for
-  future students doing a similar project.}
-
-The main recommendation is to start early and leave a large amount of time for the PCB as this is cricual to get right. My team spent a long time on the PCB and schematic design and becouse of that had to do functionally no rework making the rest of the project much easier. Secondly I would incouge other students to read through the provided libraries as they contain a lot of great examples of well writen code and give a good starting point for the software. Finally I would recommend that students design the system with the race in mind with tunning paramiters that can be used to change how the controller handles. As this give them a huge advantage in the race.
+My main recommendation is to start early and leave a large amount of time for the PCB as this is crucial to get right. My team spent a long time on the PCB and schematic design and because of this had to do functionally no rework making the rest of the project much easier. Secondly I would encourage other students to read through the provided libraries as they contain a lot of great examples of well written code and give a good starting point for the software. Finally I would recommend that students design the system with the race in mind with tuning parameters that can be used to change how the controller handles. As this will give them a huge advantage in the race.
 
 \section{Recommendations to improve project}
 
-\comment{In this section describe your recommendations (with reasons) for
-  how the project could be improved.}
+I think that another milestone should be added after radio communication which assess the performance of the racer-hat system. Then the race should be pushed to study leave or everything moved a week forward in the term. I also think that it is imperative that more lab slots are added on another day with the ability for students to ask questions on the first day then be assessed on the second. This is nessasary as the current system does not really allow for any of the actual software design to be completed in the labs. Finally I think that more time needed to be allowed during software development to ensure that the students create clean code that is well modularised. 
 
-I think that another milestone should be added after radio communication which assess the performance of the racer, hat system. Then the race should be pushed to study leave or everything moved a week forward. Second I think that it is imperitive that more lab slots are added on another day with the ability for students to ask questions of the first day then be assessed on the second. This is nessasary as the current system does not really allow for any of the actual software design to be completed in the labs.
-
-\pagebreak
 \section{Peer assessment}
-
-\comment{There are two assessments to fill into the table}:
 
 \noindent
 \begin{tabular}{|l|l||l|l|}
@@ -82,8 +61,7 @@ Name \hspace{5cm} & Score     & Name \hspace{5cm} & Score \\
 Jack Duignan        & 3 & Jack Duignan        &  3 \\ \hline
 Ethan Wildash-Chan  & 2 & Ethan Wildash-Chan  &  2 \\ \hline
                     & & Isha Patel            &  2 \\ \cline{3-4}
-                    & & Daniel Hawes          &  3 \\ \cline{3-4}
-                    & &                       &    \\ \hline
+                    & & Daniel Hawes          &  3 \\ \hline
 \end{tabular}
 
 \section{Workload}
